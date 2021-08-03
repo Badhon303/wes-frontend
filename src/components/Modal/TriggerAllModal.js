@@ -1,19 +1,17 @@
-import React, {useState} from "react";
-import {func} from "prop-types";
+import React, { useState } from "react";
+import { func } from "prop-types";
 import Modal from "react-modal";
 import CancelButton from "../Button/cancelButton";
 import DropDownMenuWithIcon from "../Dropdown/DropDownWithMenu";
 import Warning from "../Message/warning";
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import Datetime from "react-datetime";
 import moment from "moment";
 import * as PurchaseAPI from "../../apis/purchase";
 import Swal from "sweetalert2";
 import CustomLoader from "../CustomLoader/CustomLoader";
-import {useHistory} from "react-router-dom";
-import {customStylesModal} from "../../utils/styleFunctions";
-
-
+import { useHistory } from "react-router-dom";
+import { customStylesModal } from "../../utils/styleFunctions";
 
 const parseDate = (prasedDate) => {
   prasedDate = prasedDate.split("T");
@@ -81,7 +79,8 @@ export default function TriggerAllModal(props) {
 
       if (!goldPoint && !goldPoint.length) {
         errors.goldPoint = "Gold point must be provided";
-      }  else if(Math.sign(goldPoint)===1 && goldPoint > props.goldPoint)    errors.goldPoint = "Gold point must be less than your total gold point";
+      }
+      // else if(Math.sign(goldPoint)===1 && goldPoint > props.goldPoint)    errors.goldPoint = "Gold point must be less than your total gold point";
 
       return errors;
     },
@@ -99,35 +98,30 @@ export default function TriggerAllModal(props) {
             res &&
             res.data &&
             (res.data.code === 406 || res.data.code === 400)
-          )  {
+          ) {
             Swal.fire("Error", res.data.message, "error");
-          }
-          else {
+          } else {
             formik.resetForm();
-              Swal.fire({
-                  icon: 'success',
-                  title: `Trigger Completer for schedule date,Tx Id: ${res.data.trigger.id}`,
-                  showDenyButton: false,
-                  showCancelButton: false,
-                  confirmButtonText: `Okay`,
-              }).then((result) => {
-                  /* Read more about isConfirmed, isDenied below */
-                  if (result.isConfirmed) {
-
-                       props.reloadData()
-                      handleModalCallback()
-                        history.push("/trigger-gold-points");
-                  }
-              })
-
+            Swal.fire({
+              icon: "success",
+              title: `Trigger Completer for schedule date,Tx Id: ${res.data.trigger.id}`,
+              showDenyButton: false,
+              showCancelButton: false,
+              confirmButtonText: `Okay`,
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                props.reloadData();
+                handleModalCallback();
+                history.push("/trigger-gold-points");
+              }
+            });
           }
         })
         .catch((err) => {
           setLoading(false);
           Swal.fire("Error", err.message, "error");
         });
-
-
     },
   });
 
@@ -147,8 +141,8 @@ export default function TriggerAllModal(props) {
   }
 
   function validateDate(currentDate, selectedDate) {
-       let yesterday = moment().subtract( 1, 'day' );
-      return currentDate.isAfter( yesterday );
+    let yesterday = moment().subtract(1, "day");
+    return currentDate.isAfter(yesterday);
   }
 
   return (
