@@ -1,0 +1,20 @@
+.node__root > circle {
+    fill: green;
+}
+
+.node__branch > circle {
+    fill: orange;
+}
+
+.node__leaf > circle {
+    fill: yellow;
+    r: 60;
+    dy:-20;
+}
+.node-title {
+    dx: -200;
+    fill: green;
+}
+
+.node-label {
+}

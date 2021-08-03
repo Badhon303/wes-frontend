@@ -1,0 +1,711 @@
+{
+  "info": {
+    "_postman_id": "7a504209-afa8-476a-8d8e-c675bb26f874",
+    "name": "WES-Wallet",
+    "description": "A wallet for SAKURA LLC where the users will be able to register,login account in the wallet and buy, sell and exhange WES coins with Bitcoin and Ethereum and many more.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Reegister",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"TOKEN\", pm.response.json().token)"
+                ]
+              }
+            }
+          ],
+          "id": "4b4c3bbb-a298-4b73-bf19-713577f2c3fb",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nickName\": \"tahmid\",\n    \"email\": \"tahmid.alam@gmail.com\",\n    \"password\": \"leads@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/v1/auth/register?referrerId=604630d5a214a781a1ee7b78",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "v1",
+                "auth",
+                "register"
+              ],
+              "query": [
+                {
+                  "key": "referrerId",
+                  "value": "604630d5a214a781a1ee7b78"
+                }
+              ]
+            },
+            "description": "User will register by entering the following paramets: \n\nfirstName,lastName,nickName,nationality,dob,gender,email,password"
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "id": "99917df7-b752-4111-92f2-dfc9b9c2799d",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"ridoan.anik@leads-bd.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/auth/forgot-password",
+            "description": "Enter the email address to get reset password token in the registered email address"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"TOKEN\", pm.response.json().token)"
+                ]
+              }
+            }
+          ],
+          "id": "8e666ffa-cb4f-40d3-bfa3-97ea006ffc4c",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@weswallet.com\",\n    \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/auth/login",
+            "description": "Login to the wallet using email as user the id and password"
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Passsword",
+          "id": "a1a6311a-a163-479e-a6e2-1c4480e3e577",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"password\": \"tahmid@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/v1/auth/reset-password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDRkZmNiMTUzMWI5ZWI3ZDk3ZTY3MzYiLCJpYXQiOjE2MTU3MjUzOTAsImV4cCI6MTYxNTcyNTk5MCwidHlwZSI6InJlc2V0UGFzc3dvcmQifQ.dKoF66Q_CTl-XYrjoy2qU47euXinnsvGZdE_PmYkbnU",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "v1",
+                "auth",
+                "reset-password"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDRkZmNiMTUzMWI5ZWI3ZDk3ZTY3MzYiLCJpYXQiOjE2MTU3MjUzOTAsImV4cCI6MTYxNTcyNTk5MCwidHlwZSI6InJlc2V0UGFzc3dvcmQifQ.dKoF66Q_CTl-XYrjoy2qU47euXinnsvGZdE_PmYkbnU"
+                }
+              ]
+            },
+            "description": "Set new password for further login to the wallet"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "id": "2ada5bd6-db3e-419e-97ac-4294a0b952f5",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTU3MDI3NTksImV4cCI6MTYxODI5NDc1OSwidHlwZSI6InJlZnJlc2gifQ.B2URXtTqysdh0WajAyXeYLSA_Uil6xjWTMK_aBg_bzU\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/auth/logout",
+            "description": "Sign-out a user from the system."
+          },
+          "response": []
+        }
+      ],
+      "id": "16922407-e14a-4a53-82aa-ccbdf52de0eb",
+      "description": "The functionalities regarding registration, login, forgot password, reset password and logout uer is included."
+    },
+    {
+      "name": "mlm",
+      "item": [
+        {
+          "name": "addByEmail",
+          "id": "ff89e907-ffb3-4676-be59-3942e4e7152b",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userEmail\": \"ridoan.anik@leads-bd.com\",\n    \"parentEmail\": \"naushad.hossain@leads-bd.com\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/mlm",
+            "description": "adds an user to mlm tree by email address"
+          },
+          "response": []
+        },
+        {
+          "name": "AddById",
+          "id": "fbc69e71-bb4e-40b3-a671-f57cd43eb645",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"parentId\": \"604630d5a214a781a1ee7b78\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/mlm/604630d5a214a781a1ee7b68",
+            "description": "Add user to mlm tree by userId"
+          },
+          "response": []
+        },
+        {
+          "name": "getRefferer",
+          "id": "10a9c033-1e71-4799-b075-39f9c93669ce",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTUzNzMwMzAsImV4cCI6MTYxNTM3NDgzMCwidHlwZSI6ImFjY2VzcyJ9.7X_smIiAvPVwUMx2PMGX0GlkRBt11RnmpZuvMROoxIA"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/mlm/6048a064870e934f31597a1f/referrer",
+            "description": "fetches referrer of user"
+          },
+          "response": []
+        }
+      ],
+      "id": "7ad960b3-baab-4dcf-baec-6e9ae269f722"
+    },
+    {
+      "name": "Admin Routes",
+      "item": [
+        {
+          "name": "Create User",
+          "id": "2b4ca496-2dda-47d1-a5f4-246488c0123a",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ0OGU1YmVhYjAxZTQ3ZmEwMjI0ZDgiLCJpYXQiOjE2MTUxMTAzMzAsImV4cCI6MTYxNTExMjEzMCwidHlwZSI6ImFjY2VzcyJ9.aUi9O0RS1QsVK8W8OJ6kycb-FQ0dKzkzbJo96PUCnKM"
+              }
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"lastName\": \"Sishir\",\n    \"email\": \"zahid.hossain@leads-bd.com\",\n    \"password\": \"leads@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/users",
+            "description": "Create a new user available only to admin"
+          },
+          "response": []
+        },
+        {
+          "name": "List Users",
+          "id": "aea57131-b36e-4c81-b202-a6e20fac51ca",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNjgiLCJpYXQiOjE2MTUzMTE3MzAsImV4cCI6MTYxNTMxMzUzMCwidHlwZSI6ImFjY2VzcyJ9.D4ofFgLF9LhvfncSXyWadz4Vps-ABmJIGafOMElyAUg"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/users",
+            "description": "Get the list of all existing users"
+          },
+          "response": []
+        },
+        {
+          "name": "Get single User",
+          "id": "306e9e30-71e7-478d-9d02-e13729d44990",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ0OGU1YmVhYjAxZTQ3ZmEwMjI0ZDgiLCJpYXQiOjE2MTUxMTAxMTcsImV4cCI6MTYxNTExMTkxNywidHlwZSI6ImFjY2VzcyJ9.RNJr2qBniLgLuEL86YJyUkksb83LeFqLdYivTDgkBs8"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/users/60448f40eab01e47fa0224db",
+            "description": "Fetch the information about a user with user id"
+          },
+          "response": []
+        },
+        {
+          "name": "List Pending Approvals",
+          "id": "fc1d85c0-2862-4d4a-a80d-888d13016ace",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ5OTA3YzBkYjA2MDE2YTczNGJkZDciLCJpYXQiOjE2MTU0Njg1MDUsImV4cCI6MTYxNTQ3MDMwNSwidHlwZSI6ImFjY2VzcyJ9.2KRnN4tNJEQSzRJZZK9Nx18Bl6cPzrDZpuCWnqQBTTQ"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/users/6049907c0db06016a734bdd7/pending-users",
+            "description": "See the list users who has sent request for manual KYC of their documents and waiting for admin review."
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "id": "a8aa983e-3fa7-4a0e-9e7e-5aa304a568a9",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ0OGU1YmVhYjAxZTQ3ZmEwMjI0ZDgiLCJpYXQiOjE2MTUxMDcxMTgsImV4cCI6MTYxNTEwODkxOCwidHlwZSI6ImFjY2VzcyJ9.mNZ7Of4k4xLe12Wa76Qg7A6QrdLm9QlCvywOB5QXGqs"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Naushad\",\n    \"middleName\": \"Hossain\",\n    \"nickName\": \"Nitul\",\n    \"gender\": \"hiza\",\n    \"dob\": \"1995-14-1\",\n    \"nationality\": \"Bangladesh\",\n    \"spouseName\": \"Moushumi\",\n    \"phone\": \"01521106768\",\n    \"nationalId\": \"564789123\",\n    \"street\": \"32/A\",\n    \"city\": \"Dhaka\",\n    \"state\": \"Dhaka\",\n    \"zipcode\": \"1204\",\n    \"photo\": \"naushad_photo.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/users/60448e5beab01e47fa0224d8",
+            "description": "Update user information (profile information) by user id"
+          },
+          "response": []
+        },
+        {
+          "name": "Change User Approval-Status",
+          "id": "8551d938-fb32-4cec-8155-8e7f31859215",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNjgiLCJpYXQiOjE2MTU1Nzc3NjEsImV4cCI6MTYxNTU3OTU2MSwidHlwZSI6ImFjY2VzcyJ9.wAd3VBQDIVQ_IcbnrXgXlGhH0W4M3hUGCJgKZuGtLOI"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"approvalStatus\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b68/change-approval-status",
+            "description": "Change the approval status of a user upon successful validation of uploaded document or any other scenario when the admin wants to change the approval status of a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "id": "3b2f1f81-793a-4d34-a8bb-2cc9c4d31452",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQwOWMwMGNlZjBmZTM5ZDUyYmM2MDQiLCJpYXQiOjE2MTUxMDQ2MjQsImV4cCI6MTYxNTEwNjQyNCwidHlwZSI6ImFjY2VzcyJ9.MgOm1_0EGATavwvV2frHO21hQhyTJtsjuLpAdIhmtLM"
+              }
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": "http://localhost:3000/v1/users/60409c00cef0fe39d52bc604",
+            "description": "Delete a user by id from the database"
+          },
+          "response": []
+        }
+      ],
+      "id": "8b83350d-4671-4f63-8fef-3a08c3784ffb",
+      "description": "An admin can create, get list of users, get user info by id, can update and delete user in the database."
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "getUser",
+          "id": "99aba3ad-a4ae-4ef8-855a-20d6dabff4e4",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTUyODAyMzMsImV4cCI6MTYxNTI4MjAzMywidHlwZSI6ImFjY2VzcyJ9.dedo-F-W8WIs7m7lYMPlgUfg5gYyz1poZGGm0ti4jGg"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b68",
+            "description": "get user by id"
+          },
+          "response": []
+        },
+        {
+          "name": "Share Profile",
+          "id": "f1c0a520-f7e3-46a8-926c-1e6da85c214d",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTUzNzMzNTAsImV4cCI6MTYxNTM3NTE1MCwidHlwZSI6ImFjY2VzcyJ9.By9GmK7Q605cfR9YLIfGmWDDxVK61zfcDnYattO8ViA"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b68/share",
+            "description": "This route is used to get shareable data when someone wants to share his own profile to others."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "id": "786f6994-48ea-4f40-ae52-f5a44311b807",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ5OTA3YzBkYjA2MDE2YTczNGJkZDciLCJpYXQiOjE2MTU0NTA0MjQsImV4cCI6MTYxNTQ1MjIyNCwidHlwZSI6ImFjY2VzcyJ9.a5Yb4uCyLioWVcRHvLLjfZmphKpu8G498oB3aP-omSY"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Naushad\",\n    \"middleName\": \"Hossain\",\n    \"nickName\": \"Nitul\",\n    \"gender\": \"male\",\n    \"nationality\": \"Bangladesh\",\n    \"spouseName\": \"Moushumi\",\n    \"phone\": \"01521106768\",\n    \"nationalId\": \"564789123\",\n    \"street\": \"32/A\",\n    \"city\": \"Dhaka\",\n    \"state\": \"Dhaka\",\n    \"zipcode\": \"1204\",\n    \"photo\": \"naushad_photo.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b68",
+            "description": "Update user information (profile information) by user id"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile Photo",
+          "id": "76dfaab7-0219-48e4-8ce2-d71b9c294028",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTU0NDQ3NzksImV4cCI6MTYxNTQ0NjU3OSwidHlwZSI6ImFjY2VzcyJ9.l4rPXNhhIqoTS2FUNr3MfzZGa_PoxDVaWJV3IU491_M"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "profile-photo",
+                  "description": "avatar",
+                  "type": "file",
+                  "src": "/home/anik/Downloads/Images/my_photo.jpg"
+                }
+              ]
+            },
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b78/upload-profile-photo",
+            "description": "Update user profile picture"
+          },
+          "response": []
+        },
+        {
+          "name": "Update NID",
+          "id": "e6aecc62-d36c-49a7-9366-6d7a93e458bd",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTU0Njc4NjcsImV4cCI6MTYxNTQ2OTY2NywidHlwZSI6ImFjY2VzcyJ9.Do9psCY4sXiFng2J0o8RV_tdU4WmlIf1gRSP3acloRE"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "mycard-photo",
+                  "type": "file",
+                  "src": "/home/anik/Downloads/Images/nid_front.jpg"
+                },
+                {
+                  "key": "mycard-photo",
+                  "type": "file",
+                  "src": "/home/anik/Downloads/Images/nid_back.jpg"
+                }
+              ]
+            },
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b78/upload-nid-photo",
+            "description": "Upload/update the national identity card information. Both the front side and back side needs to be submitted with the request."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Passport Photo",
+          "id": "4a31f1d9-f091-464e-8763-60e5f79961fa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTUzNjk2MTYsImV4cCI6MTYxNTM3MTQxNiwidHlwZSI6ImFjY2VzcyJ9.NJK8TbC4iP5iCaNXFoX_cbMXI_yMzkyvQ13E9ZYcrFo"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "passport-photo",
+                  "type": "file",
+                  "src": "/home/anik/Downloads/Images/passport.jpg"
+                }
+              ]
+            },
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b78/upload-passport-photo",
+            "description": "Upload the biodata page of passport and get the information updated in the database"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Driving License",
+          "id": "225c12ce-310e-4c30-82cf-f765cdd12282",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNzgiLCJpYXQiOjE2MTUzNjk2MTYsImV4cCI6MTYxNTM3MTQxNiwidHlwZSI6ImFjY2VzcyJ9.NJK8TbC4iP5iCaNXFoX_cbMXI_yMzkyvQ13E9ZYcrFo"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "driving-license-photo",
+                  "type": "file",
+                  "src": "/home/anik/Downloads/Images/driving_front.jpg"
+                },
+                {
+                  "key": "driving-license-photo",
+                  "type": "file",
+                  "src": "/home/anik/Downloads/Images/driving_back.jpg"
+                }
+              ]
+            },
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b78/upload-driving-photo",
+            "description": "Upload or update driving license photo both front side and back side to the database"
+          },
+          "response": []
+        },
+        {
+          "name": "Change password",
+          "id": "c3ac70a5-6efd-4955-a6a0-1fdbf95aa893",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ2MzBkNWEyMTRhNzgxYTFlZTdiNjgiLCJpYXQiOjE2MTU3Mjc4MzksImV4cCI6MTYxNTcyOTYzOSwidHlwZSI6ImFjY2VzcyJ9.twYNQeTCQjhNCD0s5eN4tDr1PnsU0WbNNOBW099UaL4"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"newPassword\": \"leads@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/users/604630d5a214a781a1ee7b68/change-password",
+            "description": "Change user password from user profile"
+          },
+          "response": []
+        }
+      ],
+      "id": "b3501336-db5a-45eb-8bed-2963a086f01e"
+    },
+    {
+      "name": "roles",
+      "item": [
+        {
+          "name": "GET ALL Roles",
+          "id": "53c2bfc1-02c6-4d5d-a242-4bd065ab2ab7",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ5OTA3YzBkYjA2MDE2YTczNGJkZDciLCJpYXQiOjE2MTU3MjU1ODcsImV4cCI6MTYxNTcyNzM4NywidHlwZSI6ImFjY2VzcyJ9.T7buzwobVUlHK8Nxj28c7uSQfkJKtqVT8EnJrZpybRA"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/roles",
+            "description": "List all roles available"
+          },
+          "response": []
+        },
+        {
+          "name": "POST new role",
+          "id": "2fe90c55-5b26-42c1-9ef0-d6d95cca520a",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ5OTA3YzBkYjA2MDE2YTczNGJkZDciLCJpYXQiOjE2MTU3MjU1ODcsImV4cCI6MTYxNTcyNzM4NywidHlwZSI6ImFjY2VzcyJ9.T7buzwobVUlHK8Nxj28c7uSQfkJKtqVT8EnJrZpybRA"
+              }
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"user\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/roles",
+            "description": "Creates a new role"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Role Privileges",
+          "id": "b8dd52d8-6ab7-48fc-974a-c51f661e95de",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "",
+            "description": "Add privilege to role"
+          },
+          "response": []
+        }
+      ],
+      "id": "27b14fbe-0bb0-4837-9318-2f6735ce0991"
+    },
+    {
+      "name": "privileges",
+      "item": [
+        {
+          "name": "POST new privilege",
+          "id": "fdeda6eb-8075-4e7f-bb56-3865bc7d4c00",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ5OTA3YzBkYjA2MDE2YTczNGJkZDciLCJpYXQiOjE2MTU3MjU1ODcsImV4cCI6MTYxNTcyNzM4NywidHlwZSI6ImFjY2VzcyJ9.T7buzwobVUlHK8Nxj28c7uSQfkJKtqVT8EnJrZpybRA"
+              }
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"privilege\": \"addNewPrivilege\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://localhost:3000/v1/privileges",
+            "description": "List all types of privileges available."
+          },
+          "response": []
+        },
+        {
+          "name": "GET All Privileges",
+          "id": "db46d906-c5d4-469d-a0c0-6a0b00dea717",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDQ5OTA3YzBkYjA2MDE2YTczNGJkZDciLCJpYXQiOjE2MTU3MjU1ODcsImV4cCI6MTYxNTcyNzM4NywidHlwZSI6ImFjY2VzcyJ9.T7buzwobVUlHK8Nxj28c7uSQfkJKtqVT8EnJrZpybRA"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/v1/privileges",
+            "description": "List all types of privileges available."
+          },
+          "response": []
+        }
+      ],
+      "id": "277edc4b-0683-4b3d-aaf0-fb68d6f5539c"
+    }
+  ]
+}

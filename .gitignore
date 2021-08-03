@@ -1,0 +1,9 @@
+node_modules
+.eslintcache
+
+
+.idea/inspectionProfiles/
+build/
+.env
+
+public/image/
