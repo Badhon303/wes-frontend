@@ -23,13 +23,13 @@ export default function RPDetailsModal(props) {
   const [triggeredUsers, setUserDetailsForAll] = useState([]);
   const userInfo = UserManager.getLoggedInUser();
 
-  console.log(props.id, "id");
+  // console.log(props.id, "id");
   useEffect(() => {
     if (props.type === "single" && props.id) {
-      GPDetailsForOneApi(props.id).then(() => console.log(""));
+      GPDetailsForOneApi(props.id); //.then(() => console.log(""))
     }
     if (props.type === "all" && props.id) {
-      GPDetailsForAllApi(props.id).then(() => console.log(""));
+      GPDetailsForAllApi(props.id); //.then(() => console.log(""))
     }
   }, [activePage, props.id, props.type]);
 
@@ -50,7 +50,7 @@ export default function RPDetailsModal(props) {
         }
       );
       const response = await data.json();
-      console.log(response, "res");
+      // console.log(response, "res");
 
       if (response && response.code === 404) {
         setLoading(false);
@@ -83,7 +83,7 @@ export default function RPDetailsModal(props) {
         }
       );
       const response = await data.json();
-      console.log(response, "res");
+      // console.log(response, "res");
 
       if (response && response.code === 404) {
         setLoading(false);
@@ -96,7 +96,7 @@ export default function RPDetailsModal(props) {
         else {
           setUserDetailsForAll(response.trigger);
           setTotalUser(response.totalResults);
-          console.log(response, "are");
+          // console.log(response, "are");
         }
       } else Swal.fire("Whoops..", "No  data found", "error");
     }

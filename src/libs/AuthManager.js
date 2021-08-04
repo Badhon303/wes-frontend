@@ -1,14 +1,15 @@
-import Cookies from 'js-cookie'
-import UserManager from './UserManager';
+import Cookies from "js-cookie";
+import UserManager from "./UserManager";
 
 export function isLoggedIn() {
-    let accessToken = Cookies.get('access-token');
+  let accessToken = Cookies.get("access-token");
 
-    return !!accessToken;
+  console.log("ei holo accessToken: ", !!accessToken);
+  return !!accessToken;
 }
 
 export function isAdmin() {
-    const user = UserManager.getLoggedInUser();
+  const user = UserManager.getLoggedInUser();
 
-    return isLoggedIn() && user && user.role === 'admin';
+  return isLoggedIn() && user && user.role === "admin";
 }

@@ -21,6 +21,13 @@ import DropDownMenuWithIcon from "../../components/Dropdown/DropDownWithMenu";
 import Swal from "sweetalert2";
 import CreateBtcModal from "../../components/Modal/CreateBtcAccount";
 import { LogoOfTokens } from "../../components/IconsSvg/svgIcons";
+import CustomLoader from "../../components/CustomLoader/CustomLoader";
+// hot wallet change start
+import {
+  createBitcoinAccount,
+  createEtherAccount,
+} from "../../apis/createAccount";
+// hot wallet change end
 
 export default function UserDashboard(props) {
   let history = useHistory();
@@ -55,9 +62,10 @@ export default function UserDashboard(props) {
   const [btcInfo, setBtcInfo] = useState(null);
   const [bchType, setBchType] = useState(null);
   const [address, setAddress] = useState(null);
-  const [createAccount, setCreateAccount] = useState(null);
+  // const [createAccount, setCreateAccount] = useState(null);
   const [introducer, setIntroducer] = useState(null);
   const [referralPoint, setReferralPoint] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [goldPoint, setGoldPoint] = useState(null); //hot wallet
   const [ownedGoldPointPrice, setOwnedGoldPointPrice] = useState(null); //hot wallet
 
@@ -73,6 +81,7 @@ export default function UserDashboard(props) {
     const response = await data.json();
 
     if (response) {
+      // console.log("rat 3ta response: ", response);
       if (response.code === 401) history.push("/signin");
       else if (response.code === 404)
         console.log("Whoops..", "No user data found", "error");
@@ -82,6 +91,10 @@ export default function UserDashboard(props) {
           ether: response.ethAccount ? response.ethAccount.address : "",
           bitcoin: response.btcAccount ? response.btcAccount.address : "",
         });
+        // console.log(
+        //   "response.ethAccount.address: ",
+        //   response.ethAccount.address
+        // );
         setAddress(response.ethAccount ? response.ethAccount.address : null);
         setIntroducer(response.introducer ? response.introducer : "");
       }
@@ -136,6 +149,14 @@ export default function UserDashboard(props) {
             ? response.result.balance
             : "0"
         );
+      console.log(
+        "bappy: ",
+        setWolfBalance(
+          response && response.result && response.result.balance
+            ? response.result.balance
+            : "0"
+        )
+      );
     } else console.log("Whoops..", "No user data found", "error");
   };
   const getSnowBalance = async () => {
@@ -262,11 +283,11 @@ export default function UserDashboard(props) {
       if (response) {
         if (response.code === 401) history.push("/signin");
         else if (response.code === 404)
-        console.log("Whoops..", "No referral data found", "error");
+          Swal.fire("Whoops..", "No referral data found", "error");
         else {
           setReferralPoint(response);
         }
-      } else console.log("Whoops..", "No referral data found", "error");
+      } else Swal.fire("Whoops..", "No referral data found", "error");
     }
   };
 
@@ -299,7 +320,7 @@ export default function UserDashboard(props) {
     }
   };
 
-  const getGoldPointDollarPriceApi = async () => {
+  const getGoldPointDollarPriceApi = async (goldPoints) => {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"));
 
@@ -330,8 +351,7 @@ export default function UserDashboard(props) {
     getShareQrLink("LINK");
     getShareQrLink("EMAIL");
     getReferralPointOfUser();
-    getGoldPointApi();
-    getGoldPointDollarPriceApi();
+    getGoldPointApi(); // hot wallet
   }, []);
 
   useEffect(() => {
@@ -422,7 +442,35 @@ export default function UserDashboard(props) {
         confirmButtonText: "Create Account",
       }).then((result) => {
         if (result.isConfirmed) {
-          setCreateAccount("Bitcoin");
+          setLoading(true);
+          // hot wallet start
+          createBitcoinAccount()
+            .then((response) => {
+              setLoading(false);
+
+              if (response.ok) {
+                // console.log(response,'btc create response');
+                //   setAccountInfo(response.data);
+                // } else {
+
+                Swal.fire({
+                  title: "success",
+                  text: "Bitcoin Account Created successfully",
+                  icon: "success",
+                  confirmButtonColor: "#ff8c00",
+                  confirmButtonText: "Ok",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.reload();
+                  }
+                });
+              }
+            })
+            .catch((err) => {
+              setLoading(false);
+              Swal.fire("Error", err.message, "error");
+            });
+          // setCreateAccount("Bitcoin");
         }
       });
     }
@@ -438,7 +486,36 @@ export default function UserDashboard(props) {
         confirmButtonText: "Create Account",
       }).then((result) => {
         if (result.isConfirmed) {
-          setCreateAccount("Ether");
+          setLoading(true);
+          // hot wallet start
+          createEtherAccount()
+            .then((response) => {
+              setLoading(false);
+
+              if (response.ok) {
+                // console.log(response,'ether create response');
+                //   setAccountInfo(response.data);
+                // } else {
+
+                Swal.fire({
+                  title: "success",
+                  text: "Ethereum Account Created successfully",
+                  icon: "success",
+                  confirmButtonColor: "#ff8c00",
+                  confirmButtonText: "Ok",
+                }).then((res) => {
+                  if (res.isConfirmed) {
+                    window.location.reload();
+                  }
+                });
+              }
+            })
+            .catch((err) => {
+              setLoading(false);
+              Swal.fire("Error", err.message, "error");
+            });
+          // hot wallet end
+          // setCreateAccount("Ether");
         }
       });
     }
@@ -512,6 +589,7 @@ export default function UserDashboard(props) {
 
   return (
     <>
+      {loading && <CustomLoader />}
       <div className="bg-white">
         <div className=" md:pt-6 md:pb-6 p-6 shadow bg-white">
           <div className="grid grid-cols-12 gap-4 ">
@@ -567,7 +645,7 @@ export default function UserDashboard(props) {
                     defaultValue={
                       btcInfo && btcInfo.ether ? "Ether" : "Select Coin"
                     }
-                    disabled={address ? false : true}
+                    // disabled={address ? false : true}
                     className={"rounded text-black"}
                     options={[
                       {
@@ -641,7 +719,7 @@ export default function UserDashboard(props) {
             )}
           </div>
 
-          {/* hot wallet */}
+          {/* hot wallet  */}
 
           {/* <div className="ml-4 col-span-12 md:col-span-6 mt-4  order-3 md:order-2">
             <div className="grid grid-cols-2 md:grid-cols-6 lg:gap-4 gap-2 ">
@@ -721,6 +799,8 @@ export default function UserDashboard(props) {
               </div>
             </div>
           </div> */}
+
+          {/* hot wallet end */}
 
           {/* hot wallet new */}
 
@@ -996,13 +1076,17 @@ export default function UserDashboard(props) {
         />
       )}
 
-      {createAccount && createAccount !== "" && (
+      {/* hot wallet start */}
+
+      {/* {createAccount && createAccount !== "" && (
         <CreateBtcModal
           open={true}
           createAccount={createAccount}
           cbCreate={() => setCreateAccount(null)}
         />
-      )}
+      )} */}
+
+      {/* hot wallet end */}
     </>
   );
 }

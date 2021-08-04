@@ -36,7 +36,7 @@ export default function GpHistoryDetailsModal(props) {
     }, 12000);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"));
-    console.log("ei holo", props.details);
+    // console.log("ei holo props.details: ", props.details);
     const data = await fetch(
       `${BASE_URL}/gold-point/trigger/fetch-trigger-single/${props.details._id}`,
       {
@@ -45,7 +45,7 @@ export default function GpHistoryDetailsModal(props) {
       }
     );
     const response = await data.json();
-    console.log("ei holo response", response);
+    // console.log("ei holo response", response);
 
     if (response) {
       setLoading(false);
@@ -56,7 +56,7 @@ export default function GpHistoryDetailsModal(props) {
         response.code === 500
       )
         Swal.fire("Whoops..", "No data found", "error");
-      else console.log(response, "asdf");
+      // else console.log(response, "asdf");
       setDetails(response && response ? response.trigger[0] : "");
     } else Swal.fire("Whoops..", "No  data found", "error");
   };

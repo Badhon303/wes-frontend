@@ -20,7 +20,7 @@ import {
   getSnowBalance,
   getWolfBalance,
 } from "../../apis/balance";
-import { encryptIpAddress } from "../../utils/EncryptDecrypt";
+// import { encryptIpAddress } from "../../utils/EncryptDecrypt";   // hot wallet
 
 const TYPE_WOLF = "WOLF";
 const TYPE_EAGLE = "EAGLE";
@@ -78,13 +78,13 @@ export default function SellPage() {
     initialValues: {
       address: "",
       money: "",
-      privateKey: "",
+      // privateKey: "",  //hot wallet
     },
     validateOnChange: true,
     validate: async (values) => {
       setLoading(true);
       const errors = {};
-      const { address, money, privateKey } = values;
+      const { address, money } = values; // , privateKey  hot wallet
 
       let srcAddress =
         userInfo && tokens === "BTC" ? btcInfo.bitcoin : btcInfo.ether;
@@ -165,9 +165,14 @@ export default function SellPage() {
         errors.address = "Required";
       }
 
-      if (user && user.role === "user" && !privateKey) {
-        errors.privateKey = "Required";
-      }
+      // hot wallet start
+
+      // if (user && user.role === "user" && !privateKey) {
+      //   errors.privateKey = "Required";
+      // }
+
+      // hot wallet end
+
       // else if (!isValidEmail(address)) {
       //     errors.address = 'Invalid bch address';
       // }
@@ -188,7 +193,7 @@ export default function SellPage() {
               tokens === TYPE_BTC && btcInfo ? btcInfo.bitcoin : btcInfo.ether,
             toAddress: values.address,
             amount: `${values.money}`,
-            pkey: encryptIpAddress(values.privateKey),
+            // pkey: encryptIpAddress(values.privateKey),  // hot wallet
             from_type: "normal",
           };
         }
@@ -248,12 +253,12 @@ export default function SellPage() {
             showCancelButton: true,
             cancelButtonText: "Cancel",
           }).then((result) => {
-              /* Read more about isConfirmed, isDenied below */
-              if (result.isConfirmed) {
-                  history.push("/profile/verify");
-              } else if (result.isDenied) {
-                  Swal.fire("Changes are not saved", "", "info");
-              }
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              history.push("/profile/verify");
+            } else if (result.isDenied) {
+              Swal.fire("Changes are not saved", "", "info");
+            }
           });
         }
       } else setCurrencyError(true);
@@ -279,7 +284,7 @@ export default function SellPage() {
                     <DropDownMenuWithIcon
                       className={"w-64 text-black"}
                       options={
-                          userInfo && userInfo.role === "user"
+                        userInfo && userInfo.role === "user"
                           ? [
                               {
                                 label: "ETHEREUM",
@@ -390,7 +395,8 @@ export default function SellPage() {
                   <Warning message={formik.errors.money} />
                 )}
               </div>
-              {user && user.role === "user" && (
+              {/* hot wallet start */}
+              {/* {user && user.role === "user" && (
                 <div className="m-3 pt-2">
                   <label
                     htmlFor="address"
@@ -425,7 +431,9 @@ export default function SellPage() {
                     <Warning message={formik.errors.privateKey} />
                   )}
                 </div>
-              )}
+              )} */}
+
+              {/* hot wallet end */}
             </div>
             <div className="relative flex flex-col items-center justify-center cursor-pointer">
               {loading && (

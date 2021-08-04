@@ -33,8 +33,8 @@ export default function TriggerOneModal(props) {
 
       if (!goldPoint && !goldPoint.length) {
         errors.goldPoint = "Gold point must be provided";
-      }
-      // else if(Math.sign(goldPoint)===1 && goldPoint > props.goldPoint)    errors.goldPoint = "Gold point must be less than your total gold point";
+      } else if (Math.sign(goldPoint) === 1 && goldPoint > props.goldPoint)
+        errors.goldPoint = "Gold point must be less than your total gold point";
 
       return errors;
     },
@@ -42,7 +42,7 @@ export default function TriggerOneModal(props) {
       setLoading(true);
       PurchaseAPI.triggerForOneApi(values)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setLoading(false);
 
           if (
@@ -74,7 +74,7 @@ export default function TriggerOneModal(props) {
           Swal.fire("Error", err.message, "error");
         });
 
-      console.log(values, "ad");
+      // console.log(values,'ad')
     },
   });
 
@@ -89,7 +89,7 @@ export default function TriggerOneModal(props) {
 
   function handleDate(date) {
     let time = moment(date);
-    console.log(time);
+    // console.log(time)
     formik.values.scheduleDate = time;
   }
 

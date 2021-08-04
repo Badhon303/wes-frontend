@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import Swal from "sweetalert2";
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import idVerify from "../../image/idverify.png";
 import Cookies from "js-cookie";
-import {BASE_URL} from "../../constants";
+import { BASE_URL } from "../../constants";
 import UserManager from "../../libs/UserManager";
 import DropDownMenuWithIcon from "../../components/Dropdown/DropDownWithMenu";
 import Warning from "../../components/Message/warning";
@@ -16,9 +16,14 @@ import CustomLoader from "../../components/CustomLoader/CustomLoader";
 import SnowIcon from "../../image/snow.png";
 import WolfIcon from "../../image/wolf.png";
 import EagleIcon from "../../image/eagle.png";
-import {encryptIpAddress} from "../../utils/EncryptDecrypt";
-import {customStylesModal2} from "../../utils/styleFunctions";
-
+// import { encryptIpAddress } from "../../utils/EncryptDecrypt"; // hot wallet
+import { customStylesModal2 } from "../../utils/styleFunctions";
+// hot wallet change start
+import {
+  createBitcoinAccount,
+  createEtherAccount,
+} from "../../apis/createAccount";
+// hot wallet change end
 const STEP_PRICE_LIST = "step-price-list";
 const STEP_CART_CHECKOUT = "step-cart-checkout";
 
@@ -99,6 +104,8 @@ export default function BuyPage() {
   const [etherBalance, setEtherBalance] = useState(null);
   const [bitcoinBalance, setBitcoinBalance] = useState(null);
   const [btcInfo, setBtcInfo] = useState(null);
+
+  // const [accountInfo, setAccountInfo] = useState(null); // hot wallet
 
   const getUserApi = async () => {
     const myHeaders = new Headers();
@@ -253,10 +260,10 @@ export default function BuyPage() {
     }));
     data.payment_currency = cartItems.payment_currency;
     data.payment_from_address = cartItems.payment_from_address;
-    data.payment_from_pkey = privateKey;
+    // data.payment_from_pkey = privateKey; // hot wallet
     data.token_received_address = addresses.eth.address;
 
-    if (!privateKey) return;
+    // if (!privateKey) return; // hot wallet
     // formik.values.payment_currency === "BTC" ? "BTC" : "ETH"
 
     if (
@@ -281,7 +288,7 @@ export default function BuyPage() {
             }
           });
         } else {
-          data.payment_from_pkey = encryptIpAddress(privateKey);
+          // data.payment_from_pkey = encryptIpAddress(privateKey); //hot wallet
           setLoading(true);
           PurchaseAPI.submitOrder(data)
             .then((res) => {
@@ -359,7 +366,36 @@ export default function BuyPage() {
             confirmButtonText: "Create Account",
           }).then((result) => {
             if (result.isConfirmed) {
-              setCreateAccount("Bitcoin");
+              setLoading(true);
+              // hot wallet start
+              createBitcoinAccount()
+                .then((response) => {
+                  setLoading(false);
+
+                  if (response.ok) {
+                    // console.log(response,'btc create response');
+                    //   setAccountInfo(response.data);
+                    // } else {
+
+                    Swal.fire({
+                      title: "success",
+                      text: "Bitcoin Account Created successfully",
+                      icon: "success",
+                      confirmButtonColor: "#ff8c00",
+                      confirmButtonText: "Ok",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        window.location.reload();
+                      }
+                    });
+                  }
+                })
+                .catch((err) => {
+                  setLoading(false);
+                  Swal.fire("Error", err.message, "error");
+                });
+              // hot wallet end
+              // setCreateAccount("Bitcoin");
             }
           });
 
@@ -376,7 +412,36 @@ export default function BuyPage() {
             confirmButtonText: "Create Account",
           }).then((result) => {
             if (result.isConfirmed) {
-              setCreateAccount("Ether");
+              setLoading(true);
+              // hot wallet start
+              createEtherAccount()
+                .then((response) => {
+                  setLoading(false);
+
+                  if (response.ok) {
+                    // console.log(response,'ether create response');
+                    //   setAccountInfo(response.data);
+                    // } else {
+
+                    Swal.fire({
+                      title: "success",
+                      text: "Ethereum Account Created successfully",
+                      icon: "success",
+                      confirmButtonColor: "#ff8c00",
+                      confirmButtonText: "Ok",
+                    }).then((res) => {
+                      if (res.isConfirmed) {
+                        window.location.reload();
+                      }
+                    });
+                  }
+                })
+                .catch((err) => {
+                  setLoading(false);
+                  Swal.fire("Error", err.message, "error");
+                });
+              // hot wallet end
+              // setCreateAccount("Ether");
             }
           });
 
@@ -405,8 +470,7 @@ export default function BuyPage() {
             Swal.fire("Changes are not saved", "", "info");
           }
         });
-      }
-      else {
+      } else {
         let data = JSON.parse(JSON.stringify(values));
         data.items = data.items.map((item) => ({
           item_id: item.item_id,
@@ -707,7 +771,10 @@ export default function BuyPage() {
                         </tr>
                       </tbody>
                     </table>
-                    <div className="flex w-full pt-6 pb-4 items-center ">
+
+                    {/* hot wallet start  */}
+
+                    {/* <div className="flex w-full pt-6 pb-4 items-center ">
                       <label className="w-24">Private Key</label>
                       <input
                         name="pKey"
@@ -715,7 +782,9 @@ export default function BuyPage() {
                         onChange={(e) => setPrivateKey(e.target.value)}
                       />
                     </div>
-                    {!privateKey && <Warning message="This is required" />}
+                    {!privateKey && <Warning message="This is required" />} */}
+
+                    {/* hot wallet end */}
 
                     <button
                       onClick={() => setStep(STEP_PRICE_LIST)}
@@ -737,14 +806,19 @@ export default function BuyPage() {
           </Modal>
         )}
       </main>
-
-      {createAccount && createAccount !== "" && (
+      {/* hot wallet start */}
+      {/* {createAccount && createAccount !== "" && (
         <CreateBtcModal
           open={true}
           createAccount={createAccount}
           cbCreate={() => setCreateAccount(null)}
         />
-      )}
+      )} */}
+      {/* hot wallet start */}
+      {/* delete /home/alam/WorkStation/expriment/wes-webapp/src/components/Modal/CreateBtcAccount.js
+      /home/alam/WorkStation/expriment/wes-webapp/src/pages/auth/btcAccountCreate.js 
+      /home/alam/WorkStation/expriment/wes-webapp/src/utils/EncryptDecrypt.js
+      */}
 
       {/*<form onSubmit={formik.handleSubmit}>*/}
       {/*<div*/}

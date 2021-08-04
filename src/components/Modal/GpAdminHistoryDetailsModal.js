@@ -48,8 +48,7 @@ export default function GpAdminHistoryDetailsModal({ details, onClose }) {
         response.code === 500
       )
         Swal.fire("Whoops..", "No data found", "error");
-      else console.log(response, "asdf");
-      setUserDetails(response && response ? response.exchangeDetails : "");
+      else setUserDetails(response && response ? response.exchangeDetails : ""); //console.log(response, "asdf");
     } else Swal.fire("Whoops..", "No  data found", "error");
   };
 

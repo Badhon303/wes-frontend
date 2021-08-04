@@ -79,8 +79,8 @@ export default function TriggerAllModal(props) {
 
       if (!goldPoint && !goldPoint.length) {
         errors.goldPoint = "Gold point must be provided";
-      }
-      // else if(Math.sign(goldPoint)===1 && goldPoint > props.goldPoint)    errors.goldPoint = "Gold point must be less than your total gold point";
+      } else if (Math.sign(goldPoint) === 1 && goldPoint > props.goldPoint)
+        errors.goldPoint = "Gold point must be less than your total gold point";
 
       return errors;
     },
@@ -91,7 +91,7 @@ export default function TriggerAllModal(props) {
       setLoading(true);
       PurchaseAPI.triggerForAllApi(values)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setLoading(false);
 
           if (

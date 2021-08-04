@@ -146,7 +146,7 @@ export default function SidebarDesktop() {
       <ul className="mt-6">
         {user &&
           user.role === "user" &&
-          user &&
+          // user &&
           (user.approvalStatus === "pending" ||
             user.approvalStatus === "unapplied") &&
           !user.firstName &&
