@@ -393,7 +393,7 @@ export default function GoldPointsTrigger() {
                           {result.user && result.user.email}
                         </p>
 
-                        <p className="w-32 text-10px md:text-sm text-gray-900 break-all  ">
+                        <p className="w-32 text-10px md:text-sm text-gray-900 underline break-all  ">
                           {result.totalGoldPoint}
                         </p>
 
