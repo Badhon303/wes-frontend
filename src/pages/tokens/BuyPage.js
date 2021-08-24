@@ -1,60 +1,61 @@
-import React, {useEffect, useState} from "react";
-import Layout from "../../components/Layout/Layout";
-import {useFormik} from "formik";
-import Swal from "sweetalert2";
-import {useHistory} from "react-router-dom";
-import idVerify from "../../image/idverify.png";
-import Cookies from "js-cookie";
-import {BASE_URL} from "../../constants";
-import UserManager from "../../libs/UserManager";
-import DropDownMenuWithIcon from "../../components/Dropdown/DropDownWithMenu";
-import Warning from "../../components/Message/warning";
-import * as PurchaseAPI from "../../apis/purchase";
-import CreateBtcModal from "../../components/Modal/CreateBtcAccount";
-import Modal from "react-modal";
-import CustomLoader from "../../components/CustomLoader/CustomLoader";
-import SnowIcon from "../../image/snow.png";
-import WolfIcon from "../../image/wolf.png";
-import EagleIcon from "../../image/eagle.png";
-import {encryptIpAddress} from "../../utils/EncryptDecrypt";
-import {customStylesModal2} from "../../utils/styleFunctions";
+import React, { useEffect, useState } from "react"
+import Layout from "../../components/Layout/Layout"
+import { useFormik } from "formik"
+import Swal from "sweetalert2"
+import { useHistory } from "react-router-dom"
+import idVerify from "../../image/idverify.png"
+import Cookies from "js-cookie"
+import { BASE_URL } from "../../constants"
+import UserManager from "../../libs/UserManager"
+import DropDownMenuWithIcon from "../../components/Dropdown/DropDownWithMenu"
+import Warning from "../../components/Message/warning"
+import * as PurchaseAPI from "../../apis/purchase"
+import CreateBtcModal from "../../components/Modal/CreateBtcAccount"
+import Modal from "react-modal"
+import CustomLoader from "../../components/CustomLoader/CustomLoader"
+import SnowIcon from "../../image/snow.png"
+import WolfIcon from "../../image/wolf.png"
+import EagleIcon from "../../image/eagle.png"
+import { encryptIpAddress } from "../../utils/EncryptDecrypt"
+import { customStylesModal2 } from "../../utils/styleFunctions"
+import "./BuyPage.css"
 
-const STEP_PRICE_LIST = "step-price-list";
-const STEP_CART_CHECKOUT = "step-cart-checkout";
+const STEP_PRICE_LIST = "step-price-list"
+const STEP_CART_CHECKOUT = "step-cart-checkout"
 
-const CURRENCY_BTC = "BTC";
-const CURRENCY_ETH = "ETH";
+const CURRENCY_BTC = "BTC"
+const CURRENCY_ETH = "ETH"
 
 const validate = (values) => {
-  const errors = {};
-  const { items, payment_currency } = values;
+  const errors = {}
+  const { items, payment_currency } = values
 
   if (!items.length) {
-    errors.items = "Select at least one item to puchase";
+    errors.items = "Select at least one item to puchase"
   }
 
   if (!payment_currency) {
-    errors.payment_currency = "Select payment currency";
+    errors.payment_currency = "Select payment currency"
   }
 
-  return errors;
-};
+  return errors
+}
 
 function LogoOfTokens({ type }) {
-  let imageSrc;
-  if (type === "WOLF") imageSrc = WolfIcon;
-  if (type === "SNOW") imageSrc = SnowIcon;
-  if (type === "EAGLE") imageSrc = EagleIcon;
+  let imageSrc
+  if (type === "WOLF") imageSrc = WolfIcon
+  if (type === "SNOW") imageSrc = SnowIcon
+  if (type === "EAGLE") imageSrc = EagleIcon
 
   if (type === "WOLF" || type === "SNOW" || type === "EAGLE") {
     return (
       <img
         src={imageSrc}
-        alt="logo of bitcoin"
-        className="w-8 h-8 rounded-full mr-3"
+        alt='logo of bitcoin'
+        className='w-8 h-8 rounded-full mr-3'
       />
-    );
-  } else return "";
+    )
+  } else return ""
 }
 const exampleOrder = {
   payment_currency: "ETH",
@@ -82,131 +83,134 @@ const exampleOrder = {
       token: "SNOW",
     },
   ],
-};
+}
 
 export default function BuyPage() {
-  let history = useHistory();
-  const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(STEP_PRICE_LIST);
-  const [user, setUser] = useState(null);
-  const [addresses, setAddresses] = useState({});
-  const userInfo = UserManager.getLoggedInUser();
-  const [tokenPrices, setTokenPrices] = useState([]);
-  const [createAccount, setCreateAccount] = useState(null);
-  const [cartItems, setCartItems] = useState({ order_tokens: [] });
-  const [privateKey, setPrivateKey] = useState("");
+  let history = useHistory()
+  const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState(STEP_PRICE_LIST)
+  const [user, setUser] = useState(null)
+  const [addresses, setAddresses] = useState({})
+  const userInfo = UserManager.getLoggedInUser()
+  const [tokenPrices, setTokenPrices] = useState([])
+  const [createAccount, setCreateAccount] = useState(null)
+  const [cartItems, setCartItems] = useState({ order_tokens: [] })
+  const [privateKey, setPrivateKey] = useState("")
 
-  const [etherBalance, setEtherBalance] = useState(null);
-  const [bitcoinBalance, setBitcoinBalance] = useState(null);
-  const [btcInfo, setBtcInfo] = useState(null);
+  const [etherBalance, setEtherBalance] = useState(null)
+  const [bitcoinBalance, setBitcoinBalance] = useState(null)
+  const [btcInfo, setBtcInfo] = useState(null)
+
+  const [transacFee, setTransacFee] = useState("")
 
   const getUserApi = async () => {
-    const myHeaders = new Headers();
+    const myHeaders = new Headers()
     // myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"));
+    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"))
 
     const data = await fetch(`${BASE_URL}/users/${userInfo.id}`, {
       method: "GET",
       headers: myHeaders,
-    });
-    const response = await data.json();
+    })
+    const response = await data.json()
 
     if (response) {
-      if (response.code === 401) history.push("/signin");
+      if (response.code === 401) history.push("/signin")
       else if (response.code === 404)
-        Swal.fire("Whoops..", "No user data found", "error");
+        Swal.fire("Whoops..", "No user data found", "error")
       else {
-        setUser(response.user);
+        setUser(response.user)
         setAddresses({
           btc: response.btcAccount,
           eth: response.ethAccount,
-        });
+        })
         setBtcInfo({
           ether: response.ethAccount ? response.ethAccount.address : "",
           bitcoin: response.btcAccount ? response.btcAccount.address : "",
-        });
+        })
       }
-    } else Swal.fire("Whoops..", "No user data found", "error");
-  };
+    } else Swal.fire("Whoops..", "No user data found", "error")
+  }
 
   const getEtherBalance = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"));
+    const myHeaders = new Headers()
+    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"))
     const data = await fetch(
       `${BASE_URL}/account/get-balance?address=${btcInfo.ether}&currency=ETH&type=coin`,
       {
         method: "GET",
         headers: myHeaders,
       }
-    );
-    const response = await data.json();
+    )
+    const response = await data.json()
 
     if (response) {
       // console.log('eth',response.result.balance)
-      if (response.code === 401) history.push("/signin");
+      if (response.code === 401) history.push("/signin")
       else if (response.code === 404 || response.code === 500)
-        console.log("Whoops..", "No balance found", "error");
+        console.log("Whoops..", "No balance found", "error")
       else
         setEtherBalance(
           response && response.result && response.result.balance
             ? response.result.balance
             : "0"
-        );
-    } else console.log("Whoops..", "No user data found", "error");
-  };
+        )
+    } else console.log("Whoops..", "No user data found", "error")
+  }
 
   const getBitcoinBalance = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"));
+    const myHeaders = new Headers()
+    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"))
     const data = await fetch(
       `${BASE_URL}/account/get-balance?address=${btcInfo.bitcoin}&currency=BTC&type=coin`,
       {
         method: "GET",
         headers: myHeaders,
       }
-    );
-    const response = await data.json();
+    )
+    const response = await data.json()
 
     if (response) {
       // console.log('btc',response.result.balance)
-      if (response.code === 401) history.push("/sign02in");
+      if (response.code === 401) history.push("/sign02in")
       else if (response.code === 404 || response.code === 500)
-        console.log("Whoops..", "No balance found", "error");
+        console.log("Whoops..", "No balance found", "error")
       else
         setBitcoinBalance(
           response && response.result && response.result.balance
             ? response.result.balance
             : "0"
-        );
-    } else console.log("Whoops..", "No user data found", "error");
-  };
+        )
+    } else console.log("Whoops..", "No user data found", "error")
+  }
 
   useEffect(() => {
-    getUserApi();
-  }, []);
+    getUserApi()
+    // console.log("user_email: ", user.email)
+  }, [])
 
   useEffect(() => {
-    setLoading(true);
+    setLoading(true)
     PurchaseAPI.getTokenPriceList()
       .then((res) => {
         if (res.ok) {
-          setTokenPrices(res.data);
+          setTokenPrices(res.data)
         } else {
           Swal.fire({
             title: "Error",
             icon: "error",
             text: res.data.message,
-          });
+          })
         }
       })
       .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+        setLoading(false)
+      })
+  }, [])
 
   const callOrderApi = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"));
+    const myHeaders = new Headers()
+    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"))
 
     const data = await fetch(
       `${BASE_URL}/purchase/orders?sortBy=createdAt:desc`,
@@ -214,15 +218,15 @@ export default function BuyPage() {
         method: "GET",
         headers: myHeaders,
       }
-    );
-    const response = await data.json();
+    )
+    const response = await data.json()
 
     if (response) {
-      if (response.code === 401) history.push("/signin");
+      if (response.code === 401) history.push("/signin")
       else if (response.code === 404) {
-        Swal.fire("Whoops..", "No orders found", "error");
+        Swal.fire("Whoops..", "No orders found", "error")
       } else if (response.code === 540) {
-        Swal.fire("Whoops..", "Wrong Private Key", "error");
+        Swal.fire("Whoops..", "Wrong Private Key", "error")
       } else {
         let result =
           response &&
@@ -235,28 +239,31 @@ export default function BuyPage() {
                   result[0].status === "CONFIRMED_PAYMENT_RECEIVED") ||
                 (result[0] &&
                   result[0].status === "UNCONFIRMED_PAYMENT_RECEIVED")
-            );
-        console.log("res result", result);
+            )
+        console.log("res result", result)
         if (result && result.length > 0) {
-          return true;
-        } else if (result === 0 || result.length < 1) return false;
+          return true
+        } else if (result === 0 || result.length < 1) return false
       }
-    } else return false;
-  };
+    } else return false
+  }
 
   // console.log("check",cartItems);
   function handleSubmitCart() {
-    let data = {};
+    let data = {}
     data.items = formik.values.items.map((item) => ({
       item_id: item.item_id,
       unit_quantity: item.unit_quantity,
-    }));
-    data.payment_currency = cartItems.payment_currency;
-    data.payment_from_address = cartItems.payment_from_address;
-    data.payment_from_pkey = privateKey;
-    data.token_received_address = addresses.eth.address;
+    }))
+    data.payment_currency = cartItems.result.order_token.payment_currency
+    data.payment_from_address =
+      cartItems.result.order_token.payment_from_address
+    // data.payment_from_pkey = privateKey
+    data.payment_from_user = user.email
+    data.token_received_address = addresses.eth.address
+    data.transaction_fee = transacFee
 
-    if (!privateKey) return;
+    if (!privateKey) return
     // formik.values.payment_currency === "BTC" ? "BTC" : "ETH"
 
     if (
@@ -277,16 +284,16 @@ export default function BuyPage() {
             showCancelButton: true,
           }).then((result) => {
             if (result.isConfirmed) {
-              history.push("/orders");
+              history.push("/orders")
             }
-          });
+          })
         } else {
-          data.payment_from_pkey = encryptIpAddress(privateKey);
-          setLoading(true);
+          data.payment_from_pkey = encryptIpAddress(privateKey)
+          setLoading(true)
           PurchaseAPI.submitOrder(data)
             .then((res) => {
-              console.log(res);
-              console.log(`Order Id is: ${res.data.result.order_id}`);
+              console.log(res)
+              console.log(`Order Id is: ${res.data.result.order_id}`)
               if (res.ok) {
                 PurchaseAPI.rewardReferralPoint(
                   userInfo.id,
@@ -294,51 +301,51 @@ export default function BuyPage() {
                   cartItems.amount_usd
                 )
                   .then((response) => {
-                    setLoading(false);
+                    setLoading(false)
                     if (response.ok) {
-                      setLoading(false);
+                      setLoading(false)
                       Swal.fire({
                         title: "Success",
                         icon: "success",
                         text: "Order submitted successfully",
                       }).then((res) => {
-                        history.push("/orders");
-                      });
+                        history.push("/orders")
+                      })
                     } else {
-                      setLoading(false);
+                      setLoading(false)
                       Swal.fire({
                         title: "Error",
                         icon: "error",
                         text: res.data.message,
-                      });
+                      })
                     }
                   })
                   .catch((err) => {
-                    setLoading(false);
-                    Swal.fire("Error", err.message, "error");
-                  });
+                    setLoading(false)
+                    Swal.fire("Error", err.message, "error")
+                  })
               } else {
-                setLoading(false);
+                setLoading(false)
                 Swal.fire({
                   title: "Error",
                   icon: "error",
                   text: res.data.message,
-                });
+                })
               }
             })
             .catch((err) => {
-              setLoading(false);
-              Swal.fire("Error", err.message, "error");
-            });
+              setLoading(false)
+              Swal.fire("Error", err.message, "error")
+            })
         }
-      });
-      console.log("denied", pendingStatus);
+      })
+      console.log("denied", pendingStatus)
     } else {
       Swal.fire({
         title: "You do not have sufficient Balance",
         icon: "error",
         text: "Please make sure you have sufficient balance ",
-      });
+      })
     }
   }
 
@@ -359,13 +366,14 @@ export default function BuyPage() {
             confirmButtonText: "Create Account",
           }).then((result) => {
             if (result.isConfirmed) {
-              setCreateAccount("Bitcoin");
+              setCreateAccount("Bitcoin")
             }
-          });
+          })
 
           // return;
         }
-        values.payment_from_address = addresses.btc.address;
+        values.payment_from_address = addresses.btc.address
+        values.payment_from_user = user.email
       } else if (values.payment_currency === CURRENCY_ETH) {
         if (!addresses || !addresses.eth) {
           Swal.fire({
@@ -376,13 +384,14 @@ export default function BuyPage() {
             confirmButtonText: "Create Account",
           }).then((result) => {
             if (result.isConfirmed) {
-              setCreateAccount("Ether");
+              setCreateAccount("Ether")
             }
-          });
+          })
 
           // return;
         }
-        values.payment_from_address = addresses.eth.address;
+        values.payment_from_address = addresses.eth.address
+        values.payment_from_user = user.email
       }
 
       if (user && user.approvalStatus === false) {
@@ -400,85 +409,87 @@ export default function BuyPage() {
         }).then((result) => {
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
-            history.push("/profile/verify");
+            history.push("/profile/verify")
           } else if (result.isDenied) {
-            Swal.fire("Changes are not saved", "", "info");
+            Swal.fire("Changes are not saved", "", "info")
           }
-        });
-      }
-      else {
-        let data = JSON.parse(JSON.stringify(values));
+        })
+      } else {
+        let data = JSON.parse(JSON.stringify(values))
         data.items = data.items.map((item) => ({
           item_id: item.item_id,
           unit_quantity: item.unit_quantity,
-        }));
-        setLoading(true);
+        }))
+        setLoading(true)
         PurchaseAPI.postCartItems(data).then((res) => {
-          setLoading(false);
+          console.log("cart calculation api: ", res)
+          setLoading(false)
           if (res.ok) {
-            setStep(STEP_CART_CHECKOUT);
-            setCartItems(res.data.result);
+            setStep(STEP_CART_CHECKOUT)
+            setCartItems(res.data)
             if (btcInfo) {
               if (btcInfo.ether) {
-                getEtherBalance();
+                getEtherBalance()
               }
               if (btcInfo.bitcoin) {
-                getBitcoinBalance();
+                getBitcoinBalance()
               }
             }
-          } else Swal.fire("Error", res.data.message, "error");
-        });
+          } else Swal.fire("Error", res.data.message, "error")
+        })
       }
     },
-  });
+  })
 
   formik.getTokenQuantity = function (token_id) {
-    let item = formik.values.items.find((i) => i.item_id === token_id);
-    return item ? item.unit_quantity : 0;
-  };
+    let item = formik.values.items.find((i) => i.item_id === token_id)
+    return item ? item.unit_quantity : 0
+  }
 
   function handlePurchaseUnitChange(tokenItem, e) {
-    let token_id = tokenItem.item_id;
-    let unit = parseFloat(e.target.value);
-    let items = formik.values.items || [];
-    let itemIndex = items.findIndex((i) => i.item_id === token_id);
+    let token_id = tokenItem.item_id
+    let unit = parseFloat(e.target.value)
+    let items = formik.values.items || []
+    let itemIndex = items.findIndex((i) => i.item_id === token_id)
 
     if (unit > 0) {
       if (itemIndex > -1) {
-        items[itemIndex].unit_quantity = unit;
+        items[itemIndex].unit_quantity = unit
       } else {
-        items.push({ tokenItem, item_id: token_id, unit_quantity: unit });
+        items.push({ tokenItem, item_id: token_id, unit_quantity: unit })
       }
     } else {
-      if (itemIndex > -1) items.splice(itemIndex, 1);
+      if (itemIndex > -1) items.splice(itemIndex, 1)
     }
 
-    formik.setFieldValue("items", items);
+    formik.setFieldValue("items", items)
   }
 
   function getPrice(item) {
-    return item.reduce((p, token) => p + parseFloat(token.price.usd), 0);
+    return item.reduce((p, token) => p + parseFloat(token.price.usd), 0)
   }
 
   function calcSubTotal() {
     return formik.values.items.reduce((p, orderItem) => {
-      return p + getBTCAmount(orderItem.tokenItem, orderItem.unit_quantity);
-    }, 0);
+      return p + getBTCAmount(orderItem.tokenItem, orderItem.unit_quantity)
+    }, 0)
   }
 
   function calcTotal() {
-    return calcSubTotal() + parseFloat(cartItems.transaction_fee);
+    if (cartItems.result) {
+      return calcSubTotal() + parseFloat(transacFee)
+    }
   }
 
   function getBTCAmount(item, unitQuantity) {
     // let item = tokenExchangeRates.find(tokenItem => tokenItem.token === orderItem.token);
-    let paymentCurrency = formik.values.payment_currency.toLowerCase();
+    let paymentCurrency = formik.values.payment_currency.toLowerCase()
     return item.token_info.reduce((p, tokenInfo) => {
       return (
         p +
         parseFloat(tokenInfo.price[paymentCurrency]) * parseFloat(unitQuantity)
-      );
-    }, 0);
+      )
+    }, 0)
 
     // return item ? parseFloat(item.price[paymentCurrency]) * parseFloat(orderItem.unit) : 0;
 
@@ -503,46 +514,46 @@ export default function BuyPage() {
   function getBonusInfo(orderItem) {
     // if (!orderItem.hasBonus) return '';
 
-    let { bonus, token_quantity_per_unit } = orderItem.token_info[0];
-    let bonusPercent = (bonus * 100) / token_quantity_per_unit;
-    return (bonusPercent = Math.round(bonusPercent * 100) / 100);
+    let { bonus, token_quantity_per_unit } = orderItem.token_info[0]
+    let bonusPercent = (bonus * 100) / token_quantity_per_unit
+    return (bonusPercent = Math.round(bonusPercent * 100) / 100)
   }
 
   function handleModalClose() {
-    setStep(STEP_PRICE_LIST);
+    setStep(STEP_PRICE_LIST)
     // formik.setFieldValue('items', []);
   }
 
-  console.log(formik.values.payment_currency, "adfsfaf");
+  // console.log(formik.values.payment_currency, "adfsfaf")
 
   return (
     <Layout>
-      <main className="flex justify-center ">
+      <main className='flex justify-center '>
         {loading && <CustomLoader />}
         {!loading && (
-          <div className="max-w-3xl bg-white rounded-xl p-2 md:p-6">
-            <div className="rounded-xl border-1  bg-white rounded-xl p-2 md:p-6">
-              <p className="text-xl font-bold pb-4"> Buy </p>
+          <div className='max-w-3xl bg-white rounded-xl p-2 md:p-6'>
+            <div className='rounded-xl border-1  bg-white rounded-xl p-2 md:p-6'>
+              <p className='text-xl font-bold pb-4'> Buy </p>
               <form onSubmit={formik.handleSubmit}>
-                <div className="w-full bg-gray-100 p-2 md:p-4">
-                  <p className="text-md text-gray-700 text-left py-3">
+                <div className='w-full bg-gray-100 p-2 md:p-4'>
+                  <p className='text-md text-gray-700 text-left py-3'>
                     {" "}
                     Amount{" "}
                   </p>
                   {tokenPrices.map((tokenPrice) => (
                     <div
                       key={tokenPrice.item_id}
-                      className="flex w-full border border-black rounded mb-4"
+                      className='flex w-full border border-black rounded mb-4'
                     >
-                      <div className="pr-3 w-3/4 border-r border-black p-2">
-                        <div className="flex justify-between">
+                      <div className='pr-3 w-3/4 border-r border-black p-2'>
+                        <div className='flex justify-between'>
                           <span>
                             {" "}
-                            <span className="flex items-center flex-row ">
+                            <span className='flex items-center flex-row '>
                               {" "}
                               <LogoOfTokens type={tokenPrice.item_id} />{" "}
                               {tokenPrice.item_id}
-                              <span className="text-site-theme ml-3">
+                              <span className='text-site-theme ml-3'>
                                 {tokenPrice.has_bonus
                                   ? `${getBonusInfo(tokenPrice)}% Bonus`
                                   : ""}{" "}
@@ -551,9 +562,9 @@ export default function BuyPage() {
                           </span>
                           <a>$ {getPrice(tokenPrice.token_info)}</a>
                         </div>
-                        <ul className="px-4">
+                        <ul className='px-4'>
                           {tokenPrice.token_info.map((token_info) => (
-                            <li className="font-light" key={token_info.token}>
+                            <li className='font-light' key={token_info.token}>
                               {`${token_info.token} 1 unit = ${
                                 token_info.token_quantity_per_unit +
                                 token_info.bonus
@@ -562,14 +573,14 @@ export default function BuyPage() {
                           ))}
                         </ul>
                       </div>
-                      <div className="w-2/4 inline-block p-2">
+                      <div className='w-2/4 inline-block p-2'>
                         <input
-                          className="border rounded px-3 py-2 w-half"
-                          type="number"
+                          className='border rounded px-3 py-2 w-half'
+                          type='number'
                           defaultValue={formik.getTokenQuantity(
                             tokenPrice.item_id
                           )}
-                          min="0"
+                          min='0'
                           onChange={(e) =>
                             handlePurchaseUnitChange(tokenPrice, e)
                           }
@@ -582,12 +593,12 @@ export default function BuyPage() {
                     <Warning message={formik.errors.items} />
                   )}
                 </div>
-                <div className="w-full justify-between mb-2">
+                <div className='w-full justify-between mb-2'>
                   {formik.touched.payment_currency &&
                     formik.errors.payment_currency && (
                       <Warning message={formik.errors.payment_currency} />
                     )}
-                  <div className="mt-4">
+                  <div className='mt-4'>
                     <DropDownMenuWithIcon
                       defaultValue={
                         formik.values.payment_currency
@@ -619,8 +630,8 @@ export default function BuyPage() {
                   </div>
                 </div>
                 <button
-                  type="submit"
-                  className="hover:font-bold px-6 py-3 inline-flex justify-center w-full text-sm transition-colors duration-150 dark:hover:text-gray-200 text-white bg-site-theme font-semibold"
+                  type='submit'
+                  className='hover:font-bold px-6 py-3 inline-flex justify-center w-full text-sm transition-colors duration-150 dark:hover:text-gray-200 text-white bg-site-theme font-semibold'
                 >
                   Add to Cart
                 </button>
@@ -631,37 +642,37 @@ export default function BuyPage() {
         {step === STEP_CART_CHECKOUT && (
           <Modal
             isOpen={true}
-            contentLabel="onRequestClose Example"
+            contentLabel='onRequestClose Example'
             onRequestClose={handleModalClose}
             shouldCloseOnOverlayClick={false}
             style={customStylesModal2}
           >
             <div>
-              <div className="w-full md:max-w-7xl mx-auto bg-white rounded-xl p-2 md:p-4">
-                <div className="rounded-xl border-1  bg-white rounded-xl p-2 md:p-6">
-                  <p className="text-xl font-bold py-4"> Buy </p>
+              <div className='w-full md:max-w-7xl mx-auto bg-white rounded-xl p-2 md:p-4'>
+                <div className='rounded-xl border-1  bg-white rounded-xl p-2 md:p-6'>
+                  <p className='text-xl font-bold py-4'> Buy </p>
 
-                  <div className="">
-                    <p className="text-md px-2 py-3">Cart </p>
-                    <table className="w-full border border-black">
-                      <thead className="border border-black">
+                  <div className=''>
+                    <p className='text-md px-2 py-3'>Cart </p>
+                    <table className='w-full border border-black'>
+                      <thead className='border border-black'>
                         <tr>
-                          <th className="border-r border-black">Token</th>
+                          <th className='border-r border-black'>Token</th>
                           <th>Amount</th>
                         </tr>
                       </thead>
-                      <tbody className="border border-black">
+                      <tbody className='border border-black'>
                         {formik.values.items.map(
                           ({ tokenItem, item_id, unit_quantity }, index) => (
                             <tr key={index}>
-                              <td className="px-2 border-r border-black">
+                              <td className='px-2 border-r border-black'>
                                 {item_id}{" "}
                                 {tokenItem.has_bonus
                                   ? `${getBonusInfo(tokenItem)}% Bonus`
                                   : ""}
                               </td>
                               <td>
-                                <div className="px-2 flex justify-between">
+                                <div className='px-2 flex justify-between'>
                                   <a>{unit_quantity} Unit</a>
                                   <a>
                                     {getBTCAmount(tokenItem, unit_quantity)}{" "}
@@ -674,31 +685,33 @@ export default function BuyPage() {
                             </tr>
                           )
                         )}
-                        <tr className="border-t border-black">
-                          <td className="px-2 border-r border-black">
+                        <tr className='border-t border-black'>
+                          <td className='px-2 border-r border-black'>
                             Sub total
                           </td>
-                          <td className="px-2 text-right">
+                          <td className='px-2 text-right'>
                             {calcSubTotal()}{" "}
                             {formik.values.payment_currency === "BTC"
                               ? "BTC"
                               : "ETH"}
                           </td>
                         </tr>
-                        <tr>
-                          <td className="px-2 border-r border-black">
-                            Transaction Fee
-                          </td>
-                          <td className="px-2 text-right">
-                            {cartItems.transaction_fee}{" "}
-                            {formik.values.payment_currency === "BTC"
-                              ? "BTC"
-                              : "ETH"}
-                          </td>
-                        </tr>
-                        <tr className="border-t border-black">
-                          <td className="px-2 border-r border-black">Total</td>
-                          <td className="px-2 text-right">
+                        {cartItems.result && (
+                          <tr>
+                            <td className='px-2 border-r border-black'>
+                              Transaction Fee
+                            </td>
+                            <td className='px-2 text-right'>
+                              {transacFee}{" "}
+                              {formik.values.payment_currency === "BTC"
+                                ? "BTC"
+                                : "ETH"}
+                            </td>
+                          </tr>
+                        )}
+                        <tr className='border-t border-black'>
+                          <td className='px-2 border-r border-black'>Total</td>
+                          <td className='px-2 text-right'>
                             {calcTotal()}{" "}
                             {formik.values.payment_currency === "BTC"
                               ? "BTC"
@@ -707,26 +720,64 @@ export default function BuyPage() {
                         </tr>
                       </tbody>
                     </table>
-                    <div className="flex w-full pt-6 pb-4 items-center ">
-                      <label className="w-24">Private Key</label>
+                    {/* <div className='flex w-full pt-6 pb-4 items-center '>
+                      <label className='w-24'>Private Key</label>
                       <input
-                        name="pKey"
-                        className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                        name='pKey'
+                        className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                         onChange={(e) => setPrivateKey(e.target.value)}
                       />
                     </div>
-                    {!privateKey && <Warning message="This is required" />}
+                    {!privateKey && <Warning message='This is required' />} */}
+
+                    {cartItems.result && (
+                      <div className='mt-4 mx-auto text-center'>
+                        <span className='text-gray-700'>Transection Fee</span>
+                        <div className='mt-2'>
+                          <label className='inline-flex items-center'>
+                            <input
+                              type='radio'
+                              className='form-radio'
+                              name='accountType'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={cartItems.result.transaction_fee.low}
+                            />
+                            <span className='ml-2'>Low</span>
+                          </label>
+                          <label className='inline-flex items-center ml-6'>
+                            <input
+                              type='radio'
+                              className='form-radio'
+                              name='accountType'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={cartItems.result.transaction_fee.medium}
+                            />
+                            <span className='ml-2'>Medium</span>
+                          </label>
+                          <label className='inline-flex items-center ml-6'>
+                            <input
+                              type='radio'
+                              className='form-radio'
+                              name='accountType'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={cartItems.result.transaction_fee.high}
+                            />
+                            <span className='ml-2'>High</span>
+                          </label>
+                        </div>
+                      </div>
+                    )}
 
                     <button
                       onClick={() => setStep(STEP_PRICE_LIST)}
-                      className="my-3 hover:font-bold px-6 py-3 inline-flex justify-center w-full text-sm transition-colors duration-150 dark:hover:text-gray-200 text-white bg-gray-400 font-semibold"
+                      className='my-3 hover:font-bold px-6 py-3 inline-flex justify-center w-full text-sm transition-colors duration-150 dark:hover:text-gray-200 text-white bg-gray-400 font-semibold'
                     >
                       Back
                     </button>
 
                     <button
                       onClick={handleSubmitCart}
-                      className="hover:font-bold px-6 py-3 inline-flex justify-center w-full text-sm transition-colors duration-150 dark:hover:text-gray-200 text-white bg-site-theme font-semibold"
+                      className='hover:font-bold px-6 py-3 inline-flex justify-center w-full text-sm transition-colors duration-150 dark:hover:text-gray-200 text-white bg-site-theme font-semibold'
                     >
                       Submit Cart
                     </button>
@@ -817,5 +868,5 @@ export default function BuyPage() {
       {/*</div>*/}
       {/*</form>*/}
     </Layout>
-  );
+  )
 }

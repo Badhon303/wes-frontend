@@ -35,6 +35,8 @@ import AdminExchangeRate from "./pages/GoldPoints/GPAdmin/GpAdminExchangeRate"
 import AdminExchangeHistory from "./pages/GoldPoints/GPAdmin/GpAdminExchangeHistory"
 import EmailJs from "./pages/Email/email"
 import EmailVerify from "./pages/auth/EmailVerify"
+import TermsOfUse from "./pages/TermsOfUse/TermsOfUse"
+import TermsOfUseAdmin from "./pages/TermsOfUse/TermsOfUseAdmin"
 
 const App = () => (
   <Switch>
@@ -59,8 +61,15 @@ const App = () => (
       path='/email-verification/:id'
       exact
     />
+    <PublicRoute
+      restricted={false}
+      component={TermsOfUse}
+      path='/terms-of-use'
+      exact
+    />
 
     <PrivateRoute component={EmailJs} path='/emails' />
+    <PrivateRoute component={TermsOfUseAdmin} path='/admin-terms-of-use' />
     <PrivateRoute component={Profile} path='/profile/:id' />
     <PrivateRoute component={Dashboard} path='/dashboard' />
     <PrivateRoute component={Order} path='/orders' />

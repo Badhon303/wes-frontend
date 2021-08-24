@@ -14,10 +14,15 @@ const EmailVerify = (props) => {
     // alert(props.match.params.id)
     AuthAPI.emailVerify(data).then((res) => {
       console.log("emailverify: ", res)
-      setMessage(res.data.message)
-      setEmail(res.data.user.email)
-      setName(res.data.user.nickName)
-      setShowModal(true)
+      if (res.data && res.data.registrationData) {
+        setMessage(res.data.registrationData.message)
+        setEmail(res.data.registrationData.user.email)
+        setName(res.data.registrationData.user.nickName)
+        setShowModal(true)
+      } else if (res.data && res.data.message) {
+        setMessage(res.data.message)
+        setShowModal(true)
+      } else setShowModal(true)
     })
   }, [])
   return (
@@ -26,7 +31,7 @@ const EmailVerify = (props) => {
         <>
           <div
             className='justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none'
-            onClick={() => setShowModal(false)}
+            // onClick={() => setShowModal(false)}
           >
             <div className='relative w-auto my-6 mx-auto max-w-3xl'>
               {/*content*/}
@@ -45,12 +50,16 @@ const EmailVerify = (props) => {
                 </div>
                 {/*body*/}
                 <div className='relative p-6 flex-auto'>
-                  <p className='my-4 text-gray-600 text-lg leading-relaxed'>
-                    Name: {name}
-                  </p>
-                  <p className='my-4 text-gray-600 text-lg leading-relaxed'>
-                    Email: {email}
-                  </p>
+                  {name && (
+                    <p className='my-4 text-gray-600 text-lg leading-relaxed'>
+                      Name: {name}
+                    </p>
+                  )}
+                  {email && (
+                    <p className='my-4 text-gray-600 text-lg leading-relaxed'>
+                      Email: {email}
+                    </p>
+                  )}
                 </div>
                 {/*footer*/}
                 <div className='flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b'>

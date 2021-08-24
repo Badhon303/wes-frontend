@@ -1,4 +1,4 @@
-import { useFormik } from "formik"
+import { useFormik, Field, FormikProvider } from "formik"
 import { Link, useHistory } from "react-router-dom"
 import isValidEmail from "../../libs/validator/email"
 import Navbar2 from "../../components/Header/Navbar2"
@@ -8,17 +8,18 @@ import nameIcon from "../../image/icons/name.svg"
 import passwordIcon from "../../image/icons/passwrod.svg"
 import Swal from "sweetalert2"
 import AuthAPI from "../../apis/auth"
-import Cookie from "js-cookie"
+// import Cookie from "js-cookie"
 import UserManager from "../../libs/UserManager"
 import Loader from "react-loader-spinner"
-import BTAccountSuccess from "./btAccountSuccess"
-import { toast } from "../../components/Toast/toast"
+// import BTAccountSuccess from "./btAccountSuccess"
+// import { toast } from "../../components/Toast/toast"
+// import * as Yup from "yup"
 
 const REDIRECT_AFTER_SIGNUP = "profile/verify"
 
 const validate = (values) => {
   const errors = {}
-  const { nickName, password, email } = values
+  const { nickName, password, email, termsOfUse } = values
 
   if (!nickName) {
     errors.nickName = "Required"
@@ -48,6 +49,10 @@ const validate = (values) => {
     errors.email = "Invalid email address"
   }
 
+  if (termsOfUse !== true) {
+    errors.termsOfUse = "I agree to WES-Wallet's Terms"
+  }
+
   return errors
 }
 
@@ -63,6 +68,7 @@ function Signup() {
   const [btc, setBtc] = useState(null)
   const [ether, setEther] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [termsOfUse, setTermsOfUse] = useState(false)
 
   let nickName = queries.find((query) => query[0] === "nickName")
 
@@ -78,6 +84,9 @@ function Signup() {
     }
   }
 
+  const handleOnChange = () => {
+    setTermsOfUse(!termsOfUse)
+  }
   if (user) {
     redirectAfterSignup(user)
     return <></>
@@ -88,17 +97,35 @@ function Signup() {
       nickName: "",
       email: "",
       password: "",
+      termsOfUse: false,
     },
     validate,
+    handleOnChange,
     onSubmit: (values) => {
+      console.log("signup values: ", values)
       setLoading(true)
       AuthAPI.signup(values, referrerId ? referrerId[1] : null)
         .then((response) => {
-          console.log("signup: ", response)
           setLoading(false)
           if (response.ok) {
-            setBtc(response.data.btcAccount.privateKey.bn)
-            setEther(response.data.ethAccount.privateKey)
+            //B edited
+            Swal.fire({
+              title: "Congrats!",
+              text: "You have successfully created an account.A verification email has been sent to your email address. Account will be created after the verification completed.",
+              icon: "success",
+              confirmButtonText: "OK",
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                // props.reloadData();
+                // handleModalCallback();
+                history.push("/Signin")
+              }
+            })
+            //B edited closed
+            // setBtc(response.data.result.btcAccount.privateKey.bn);
+            // setEther(response.data.result.ethAccount.privateKey);
+            // console.log("Bresponse: ", response);
           } else {
             Swal.fire({
               title: response.err.statusText,
@@ -130,7 +157,7 @@ function Signup() {
         <form onSubmit={formik.handleSubmit}>
           <div className='bg-white rounded-t-xl  w-full md:w-90 xl:w-90 2xl:w-70 md:border-t-1  items-center justify-center md:mx-auto '>
             <div className='py-6 px-3 md:px-0 lg:px-0 xl:px-0 lg:w-2/7 sm:w-full md:w-3/7 xl:w-2/7 items-center justify-center md:mx-auto  '>
-              <div className='mx-auto p-4  mt-12 mb-2 bg-white shadow rounded-2xl'>
+              <div className='mx-auto p-4  mt-12 mb-4 bg-white shadow rounded-2xl'>
                 <h2 className='pt-8 pb-4  text-black  text-xl lg:text-2xl  text-center '>
                   Sign up
                 </h2>
@@ -212,7 +239,7 @@ function Signup() {
                       color='#ff8c00'
                       height={100}
                       width={100}
-                      timeout={6000} //3 secs
+                      // timeout={6000} //3 secs
                       className=' inline-block align-middle absolute  z-50  '
                     />
                   </div>
@@ -275,12 +302,45 @@ function Signup() {
                     </Link>
                   </div>
                 </div>
+                <div className='mt-4 mb-4 flex justify-center'>
+                  <label className='flex items-center'>
+                    <FormikProvider value={formik}>
+                      <Field
+                        type='checkbox'
+                        name='termsOfUse'
+                        className='form-checkbox'
+                        // onChange={formik.handleOnChange}
+                        // value={true}
+                        // checked={termsOfUse}
+                      />
+                      {/* {`${formik.values.termsOfUse}`} */}
+                      <span className='ml-2'>
+                        I agree to the{" "}
+                        <span>
+                          {" "}
+                          <Link
+                            className='text-site-theme hover:underline hover:text-red-400'
+                            to='/terms-of-use'
+                            target='_blank'
+                          >
+                            Terms of Use
+                          </Link>
+                        </span>
+                      </span>
+                    </FormikProvider>
+                  </label>
+                </div>
+                {formik.touched.termsOfUse && formik.errors.termsOfUse && (
+                  <div className='mt-2 px-2 text-sm bg-red-100 py-2 text-red-700 text-center'>
+                    {formik.errors.termsOfUse}
+                  </div>
+                )}
               </div>
 
               <div className='text-center items-center justify-center -mt-6 '>
                 <button
                   type='submit'
-                  className='w-auto px-24 py-2  uppercase bg-site-theme text-white text-lg hover:shadow-xl shadow-md'
+                  className='w-auto px-24 py-2  uppercase bg-site-theme text-white text-lg hover:shadow-xl shadow-md disabled:opacity-60'
                 >
                   Sign up
                 </button>
@@ -289,7 +349,7 @@ function Signup() {
           </div>
         </form>
       )}
-      {btc && ether && <BTAccountSuccess btc={btc} ether={ether} />}
+      {/* {btc && ether && <BTAccountSuccess btc={btc} ether={ether} />} */}
     </div>
   )
 }

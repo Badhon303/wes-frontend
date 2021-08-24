@@ -1,8 +1,8 @@
-import { NavLink, useHistory } from "react-router-dom";
-import UserManager from "../../libs/UserManager";
-import React from "react";
-import SidebarSubmenu from "../Sidebar/SidebarSubmenu";
-import { ProfileIcon, TokenIcon, UserIcon } from "../../image/icons";
+import { NavLink, useHistory } from "react-router-dom"
+import UserManager from "../../libs/UserManager"
+import React from "react"
+import SidebarSubmenu from "../Sidebar/SidebarSubmenu"
+import { ProfileIcon, TokenIcon, UserIcon } from "../../image/icons"
 
 let adminRoute = [
   {
@@ -21,7 +21,7 @@ let adminRoute = [
     name: "Rejected",
     path: "/rejected-users",
   },
-];
+]
 
 let tokenRouteAdmin = [
   {
@@ -32,7 +32,7 @@ let tokenRouteAdmin = [
   //     name:"Buy",
   //     path:"/buy"
   // },
-];
+]
 
 let tokenRouteUser = [
   {
@@ -43,7 +43,7 @@ let tokenRouteUser = [
     name: "Buy",
     path: "/buy",
   },
-];
+]
 const referralRouteAdmin = [
   {
     name: "Update Price ",
@@ -57,7 +57,7 @@ const referralRouteAdmin = [
     name: "Members ",
     path: "/members",
   },
-];
+]
 
 const referralRouteUser = [
   {
@@ -76,7 +76,7 @@ const referralRouteUser = [
     name: "Members ",
     path: "/members",
   },
-];
+]
 const goldPointsAdminRouteUser = [
   {
     name: "Trigger ",
@@ -91,7 +91,7 @@ const goldPointsAdminRouteUser = [
     name: "Exchange History ",
     path: "/gp-exchange-history",
   },
-];
+]
 
 const goldPointsUserRouteUser = [
   {
@@ -102,7 +102,7 @@ const goldPointsUserRouteUser = [
     name: "History ",
     path: "/gp-history",
   },
-];
+]
 
 let userRoute = [
   {
@@ -125,25 +125,25 @@ let userRoute = [
     name: "Change Password",
     path: "/edit-password",
   },
-];
+]
 export default function SidebarDesktop() {
-  const history = useHistory();
-  const user = UserManager.getLoggedInUser();
+  const history = useHistory()
+  const user = UserManager.getLoggedInUser()
 
   const handleLogOut = () => {
-    UserManager.removeLoggedInUser();
-    history.push("/");
-  };
+    UserManager.removeLoggedInUser()
+    history.push("/")
+  }
 
   return (
-    <div className="py-4 text-gray-500 dark:text-gray-400">
+    <div className='py-4 text-gray-500 dark:text-gray-400'>
       <a
-        className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
-        href="#"
+        className='ml-6 text-lg font-bold text-gray-800 dark:text-gray-200'
+        href='#'
       >
         Menu
       </a>
-      <ul className="mt-6">
+      <ul className='mt-6'>
         {user &&
           user.role === "user" &&
           user &&
@@ -155,57 +155,57 @@ export default function SidebarDesktop() {
             user.passportBiodata === "passport_biodata.jpg" ||
             (user.drivingBack === "driving_back.jpg" &&
               user.drivingFront === "driving_front.jpg")) && (
-            <li className="relative  py-1">
+            <li className='relative  py-1'>
               <NavLink
                 exact
                 to={"/profile/verify"}
-                className="hover:font-bold px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200"
-                activeClassName=" text-white bg-site-theme font-bold"
+                className='hover:font-bold px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
+                activeClassName=' text-white bg-site-theme font-bold'
               >
-                <div aria-hidden="true">
+                <div aria-hidden='true'>
                   <svg
-                    className="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    enableBackground="new 0 0 24 24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    width="24"
+                    className='w-5 h-5'
+                    xmlns='http://www.w3.org/2000/svg'
+                    enableBackground='new 0 0 24 24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    width='24'
                   >
                     <g>
-                      <rect fill="none" height="24" width="24" />
+                      <rect fill='none' height='24' width='24' />
                     </g>
                     <g>
-                      <path d="M23,12l-2.44-2.79l0.34-3.69l-3.61-0.82L15.4,1.5L12,2.96L8.6,1.5L6.71,4.69L3.1,5.5L3.44,9.2L1,12l2.44,2.79l-0.34,3.7 l3.61,0.82L8.6,22.5l3.4-1.47l3.4,1.46l1.89-3.19l3.61-0.82l-0.34-3.69L23,12z M10.09,16.72l-3.8-3.81l1.48-1.48l2.32,2.33 l5.85-5.87l1.48,1.48L10.09,16.72z" />
+                      <path d='M23,12l-2.44-2.79l0.34-3.69l-3.61-0.82L15.4,1.5L12,2.96L8.6,1.5L6.71,4.69L3.1,5.5L3.44,9.2L1,12l2.44,2.79l-0.34,3.7 l3.61,0.82L8.6,22.5l3.4-1.47l3.4,1.46l1.89-3.19l3.61-0.82l-0.34-3.69L23,12z M10.09,16.72l-3.8-3.81l1.48-1.48l2.32,2.33 l5.85-5.87l1.48,1.48L10.09,16.72z' />
                     </g>
                   </svg>
                 </div>
-                <span className="ml-4">ID Verification</span>
+                <span className='ml-4'>ID Verification</span>
               </NavLink>
             </li>
           )}
 
         {user && (
-          <li className="relative  py-1">
+          <li className='relative  py-1'>
             <NavLink
               exact
               to={"/dashboard"}
-              className="hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200"
-              activeClassName=" text-white bg-site-theme font-bold"
+              className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
+              activeClassName=' text-white bg-site-theme font-bold'
             >
-              <div aria-hidden="true">
+              <div aria-hidden='true'>
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  enableBackground="new 0 0 24 24"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  width="24px"
-                  fill="#000000"
+                  xmlns='http://www.w3.org/2000/svg'
+                  enableBackground='new 0 0 24 24'
+                  height='24px'
+                  viewBox='0 0 24 24'
+                  width='24px'
+                  fill='#000000'
                 >
-                  <rect fill="none" height="24" width="24" />
-                  <path d="M11,21H5c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h6V21z M13,21h6c1.1,0,2-0.9,2-2v-7h-8V21z M21,10V5c0-1.1-0.9-2-2-2h-6v7H21z" />
+                  <rect fill='none' height='24' width='24' />
+                  <path d='M11,21H5c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h6V21z M13,21h6c1.1,0,2-0.9,2-2v-7h-8V21z M21,10V5c0-1.1-0.9-2-2-2h-6v7H21z' />
                 </svg>
               </div>
-              <span className="ml-4">Dashboard</span>
+              <span className='ml-4'>Dashboard</span>
             </NavLink>
           </li>
         )}
@@ -273,110 +273,135 @@ export default function SidebarDesktop() {
         )}
 
         {user && (
-          <li className="relative  py-1">
+          <li className='relative  py-1'>
             <NavLink
               exact
               to={"/orders"}
-              className="hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200"
-              activeClassName=" text-white bg-site-theme font-bold"
+              className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
+              activeClassName=' text-white bg-site-theme font-bold'
             >
-              <div aria-hidden="true">
+              <div aria-hidden='true'>
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  width="24px"
-                  fill="#000000"
+                  xmlns='http://www.w3.org/2000/svg'
+                  height='24px'
+                  viewBox='0 0 24 24'
+                  width='24px'
+                  fill='#000000'
                 >
-                  <path d="M0 0h24v24H0z" fill="none" />
-                  <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+                  <path d='M0 0h24v24H0z' fill='none' />
+                  <path d='M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z' />
                 </svg>
               </div>
-              <span className="ml-4">Orders</span>
+              <span className='ml-4'>Orders</span>
             </NavLink>
           </li>
         )}
 
         {user && user.role === "admin" && (
-          <li className="relative  py-1">
+          <li className='relative  py-1'>
             <NavLink
               exact
               to={"/emails"}
-              className="hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200"
-              activeClassName=" text-white bg-site-theme font-bold"
+              className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
+              activeClassName=' text-white bg-site-theme font-bold'
             >
-              <div aria-hidden="true">
+              <div aria-hidden='true'>
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  width="24px"
-                  fill="#000000"
+                  xmlns='http://www.w3.org/2000/svg'
+                  height='24px'
+                  viewBox='0 0 24 24'
+                  width='24px'
+                  fill='#000000'
                 >
-                  <path d="M0 0h24v24H0z" fill="none" />
-                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                  <path d='M0 0h24v24H0z' fill='none' />
+                  <path d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z' />
                 </svg>
               </div>
-              <span className="ml-4">Email</span>
+              <span className='ml-4'>Email</span>
+            </NavLink>
+          </li>
+        )}
+
+        {user && user.role === "admin" && (
+          <li className='relative  py-1'>
+            <NavLink
+              exact
+              to={"admin-terms-of-use"}
+              className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
+              activeClassName=' text-white bg-site-theme font-bold'
+            >
+              <div aria-hidden='true'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  height='20px'
+                  viewBox='0 0 16 16'
+                  width='20px'
+                  fill='#000000'
+                >
+                  <path d='M0 0h24v24H0z' fill='none' />
+                  <path d='M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z' />
+                </svg>
+              </div>
+              <span className='ml-4'>Terms Of Use</span>
             </NavLink>
           </li>
         )}
 
         {user && user.role === "user" && (
-          <li className="relative  py-1">
+          <li className='relative  py-1'>
             <a
               href={"https://wes.s-capitalpartners.com/"}
               target={"_blank"}
-              className="hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200"
+              className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
             >
-              <span className="ml-1">Link to LP Site </span>
+              <span className='ml-1'>Link to LP Site </span>
             </a>
           </li>
         )}
         {user && user.role === "user" && (
-          <li className="relative  py-1">
+          <li className='relative  py-1'>
             <a
               href={"https://wes.s-capitalpartners.com/en/#wallet"}
               target={"_blank"}
-              className="hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200"
+              className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
             >
-              <span className="ml-1">Link to LP Site News </span>
+              <span className='ml-1'>Link to LP Site News </span>
             </a>
           </li>
         )}
         {user && user.role === "user" && (
-          <li className="relative  py-1">
+          <li className='relative  py-1'>
             <a
               href={"https://wes.s-capitalpartners.com/en/#contact"}
               target={"_blank"}
-              className="hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200"
+              className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'
             >
-              <span className="ml-1">Link to LP Site Contact </span>
+              <span className='ml-1'>Link to LP Site Contact </span>
             </a>
           </li>
         )}
 
-        <div className="my-1 border-b-2 w-full" />
+        <div className='my-1 border-b-2 w-full' />
 
         <li
-          className="relative  py-1 bottom-0 left-0 cursor-pointer"
+          className='relative  py-1 bottom-0 left-0 cursor-pointer'
           onClick={handleLogOut}
         >
-          <a className="hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200">
+          <a className='hover:font-bold  px-6 py-3 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 dark:hover:text-gray-200'>
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 0 24 24"
-              width="24px"
-              fill="#000000"
+              xmlns='http://www.w3.org/2000/svg'
+              height='24px'
+              viewBox='0 0 24 24'
+              width='24px'
+              fill='#000000'
             >
-              <path d="M0 0h24v24H0z" fill="none" />
-              <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+              <path d='M0 0h24v24H0z' fill='none' />
+              <path d='M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z' />
             </svg>
-            <span className="ml-4">Log Out </span>
+            <span className='ml-4'>Log Out </span>
           </a>
         </li>
       </ul>
     </div>
-  );
+  )
 }
