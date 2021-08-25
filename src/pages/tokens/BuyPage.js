@@ -264,10 +264,8 @@ export default function BuyPage() {
     data.token_received_address = addresses.eth.address
     data.transaction_fee = transacFee
 
-    // if (!privateKey) return
+    if (transacFee === "") return
     // formik.values.payment_currency === "BTC" ? "BTC" : "ETH"
-
-    if (transacFee === "") alert("Must check some option!")
 
     if (
       (formik.values.payment_currency === "ETH" &&
@@ -276,6 +274,7 @@ export default function BuyPage() {
     ) {
       // console.log(etherBalance+'ether bal'+ calcTotal()+ bitcoinBalance)
       //check api
+      console.log("cartItems :", cartItems)
       let pendingStatus = callOrderApi().then((pendingStatus) => {
         if (pendingStatus === true) {
           Swal.fire({
@@ -297,11 +296,11 @@ export default function BuyPage() {
             .then((res) => {
               console.log(res)
               console.log(`Order Id is: ${res.data.result.order_id}`)
-              if (res.ok) {
+              if (res.ok && cartItems.result) {
                 PurchaseAPI.rewardReferralPoint(
                   userInfo.id,
                   res.data.result.order_id,
-                  cartItems.amount_usd
+                  cartItems.result.amount_usd
                 )
                   .then((response) => {
                     setLoading(false)
@@ -483,10 +482,11 @@ export default function BuyPage() {
         }))
         setLoading(true)
         PurchaseAPI.postCartItems(data).then((res) => {
-          console.log("cart calculation api: ", res)
+          // console.log("cart calculation api: ", res)
           setLoading(false)
           if (res.ok) {
             setStep(STEP_CART_CHECKOUT)
+            setTransacFee("")
             setCartItems(res.data)
             if (btcInfo) {
               if (btcInfo.ether) {
@@ -707,6 +707,7 @@ export default function BuyPage() {
             onRequestClose={handleModalClose}
             shouldCloseOnOverlayClick={false}
             style={customStylesModal2}
+            ariaHideApp={false}
           >
             <div>
               <div className='w-full md:max-w-7xl mx-auto bg-white rounded-xl p-2 md:p-4'>
@@ -794,6 +795,17 @@ export default function BuyPage() {
                     {cartItems.result && (
                       <div className='mt-4 mx-auto text-center'>
                         <span className='text-gray-700'>Transection Fee</span>
+                        <div class='md:flex md:items-center'>
+                          <div class='md:w-1/3 ml-16'></div>
+                          <div class='md:w-1/5'>
+                            <input
+                              class='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500'
+                              type='text'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={transacFee}
+                            />
+                          </div>
+                        </div>
                         <div className='mt-2'>
                           <label className='inline-flex items-center'>
                             <input
