@@ -18,7 +18,7 @@ import WolfIcon from "../../image/wolf.png"
 import EagleIcon from "../../image/eagle.png"
 import { encryptIpAddress } from "../../utils/EncryptDecrypt"
 import { customStylesModal2 } from "../../utils/styleFunctions"
-import "./BuyPage.css"
+import { createBlockChainAccount } from "../../apis/createAccount"
 
 const STEP_PRICE_LIST = "step-price-list"
 const STEP_CART_CHECKOUT = "step-cart-checkout"
@@ -255,16 +255,19 @@ export default function BuyPage() {
       item_id: item.item_id,
       unit_quantity: item.unit_quantity,
     }))
-    data.payment_currency = cartItems.result.order_token.payment_currency
-    data.payment_from_address =
-      cartItems.result.order_token.payment_from_address
+    if (cartItems.result)
+      data.payment_currency = cartItems.result.payment_currency
+    if (cartItems.result)
+      data.payment_from_address = cartItems.result.payment_from_address
     // data.payment_from_pkey = privateKey
-    data.payment_from_user = user.email
+    if (user) data.payment_from_user = user.email
     data.token_received_address = addresses.eth.address
     data.transaction_fee = transacFee
 
-    if (!privateKey) return
+    // if (!privateKey) return
     // formik.values.payment_currency === "BTC" ? "BTC" : "ETH"
+
+    if (transacFee === "") alert("Must check some option!")
 
     if (
       (formik.values.payment_currency === "ETH" &&
@@ -288,7 +291,7 @@ export default function BuyPage() {
             }
           })
         } else {
-          data.payment_from_pkey = encryptIpAddress(privateKey)
+          // data.payment_from_pkey = encryptIpAddress(privateKey)
           setLoading(true)
           PurchaseAPI.submitOrder(data)
             .then((res) => {
@@ -360,13 +363,42 @@ export default function BuyPage() {
         if (!addresses || !addresses.btc) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> You do not have a Bitcoin account. </p>',
-            text: "Create a bitcoin account",
+              '<p class="text-2xl text-site-theme"> You do not have any Blockchain account. </p>',
+            text: "Create bitcoin accounts",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Create Account",
           }).then((result) => {
             if (result.isConfirmed) {
-              setCreateAccount("Bitcoin")
+              setLoading(true)
+              // hot wallet start
+              createBlockChainAccount()
+                .then((response) => {
+                  setLoading(false)
+
+                  if (response.ok) {
+                    // console.log(response,'ether create response');
+                    //   setAccountInfo(response.data);
+                    // } else {
+
+                    Swal.fire({
+                      title: "success",
+                      text: "BlockChain Accounts Created successfully",
+                      icon: "success",
+                      confirmButtonColor: "#ff8c00",
+                      confirmButtonText: "Ok",
+                    }).then((res) => {
+                      if (res.isConfirmed) {
+                        window.location.reload()
+                      }
+                    })
+                  }
+                })
+                .catch((err) => {
+                  setLoading(false)
+                  Swal.fire("Error", err.message, "error")
+                })
+              // hot wallet end
+              // setCreateAccount("Ether");
             }
           })
 
@@ -378,13 +410,42 @@ export default function BuyPage() {
         if (!addresses || !addresses.eth) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> You do not have a Ether account. </p>',
-            text: "Create a ether account",
+              '<p class="text-2xl text-site-theme"> You do not have any BlockChain account. </p>',
+            text: "Create Blockchain accounts",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Create Account",
           }).then((result) => {
             if (result.isConfirmed) {
-              setCreateAccount("Ether")
+              setLoading(true)
+              // hot wallet start
+              createBlockChainAccount()
+                .then((response) => {
+                  setLoading(false)
+
+                  if (response.ok) {
+                    // console.log(response,'btc create response');
+                    //   setAccountInfo(response.data);
+                    // } else {
+
+                    Swal.fire({
+                      title: "success",
+                      text: "Blockchain Accounts Created successfully",
+                      icon: "success",
+                      confirmButtonColor: "#ff8c00",
+                      confirmButtonText: "Ok",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        window.location.reload()
+                      }
+                    })
+                  }
+                })
+                .catch((err) => {
+                  setLoading(false)
+                  Swal.fire("Error", err.message, "error")
+                })
+              // hot wallet end
+              // setCreateAccount("Bitcoin");
             }
           })
 
@@ -765,6 +826,7 @@ export default function BuyPage() {
                             <span className='ml-2'>High</span>
                           </label>
                         </div>
+                        {!transacFee && <Warning message='Please Select One' />}
                       </div>
                     )}
 
@@ -789,13 +851,13 @@ export default function BuyPage() {
         )}
       </main>
 
-      {createAccount && createAccount !== "" && (
+      {/* {createAccount && createAccount !== "" && (
         <CreateBtcModal
-          open={true}
+          // open={true}
           createAccount={createAccount}
-          cbCreate={() => setCreateAccount(null)}
+          // cbCreate={() => setCreateAccount(null)}
         />
-      )}
+      )} */}
 
       {/*<form onSubmit={formik.handleSubmit}>*/}
       {/*<div*/}
