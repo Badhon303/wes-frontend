@@ -28,6 +28,9 @@ export default function ReferralPurchaseUserPage() {
   const [purchaseData, setPurchaseData] = useState(null)
   const [step, setStep] = useState(STEP_PRICE_LIST)
 
+  const [transacFee, setTransacFee] = useState("")
+  const [cartFee, setCartFee] = useState("")
+
   useEffect(() => {
     getUserApi()
     getReferralPointOfUser()
@@ -210,11 +213,13 @@ export default function ReferralPurchaseUserPage() {
                     ? addresses.btc.address
                     : addresses.eth.address,
                 amountOfCurrency: amountOfCurrency,
+                transactionFee: transacFee,
               }
               setPurchaseData(data)
               setStep(STEP_CART_CHECKOUT)
             })
-            .then(() => {
+            .then((res) => {
+              //   console.log("asha nai: ", res)
               data_tx = {
                 currency: values.currency,
                 type:
@@ -230,13 +235,18 @@ export default function ReferralPurchaseUserPage() {
                   values.currency === "BTC"
                     ? addresses.btc.address
                     : addresses.eth.address,
-                amount: "100",
+                amount: `${values.refPoint}`,
                 // transaction_fee: transacFee,
                 // pkey: encryptIpAddress(values.privateKey),
                 // from_type: "normal",
               }
               PurchaseAPI.getTransectionFee(data_tx).then((res) => {
-                console.log("asha nai: ", res)
+                if (res.ok) {
+                  setTransacFee("")
+                  setCartFee(res.data)
+                  // console.log("response", res);
+                  // success
+                } else Swal.fire("Error", res.data.message, "error")
               })
             })
         })
@@ -487,6 +497,21 @@ export default function ReferralPurchaseUserPage() {
                           </td>
                         </tr>
 
+                        <tr className='border-b border-black py-2'>
+                          <td className='px-2 border-r border-black'>
+                            Transaction Fee
+                          </td>
+                          <td className='px-2 text-center'>
+                            {transacFee}
+                            {formik.values.currency === "WOLF" ||
+                            formik.values.currency === "EAGLE" ||
+                            formik.values.currency === "SNOW" ||
+                            formik.values.currency === "ETH"
+                              ? "ETH"
+                              : "BTC"}
+                          </td>
+                        </tr>
+
                         <tr className='border-t border-black'>
                           <td className='px-2 py-2 border-r border-black text-black font-bold'>
                             Purchase Amount
@@ -498,6 +523,56 @@ export default function ReferralPurchaseUserPage() {
                         </tr>
                       </tbody>
                     </table>
+
+                    {cartFee.result && (
+                      <div className='mt-4 mx-auto text-center'>
+                        <span className='text-gray-700'>Transection Fee</span>
+                        <div class='md:flex md:items-center'>
+                          <div class='md:w-1/3 ml-16'></div>
+                          <div class='md:w-1/5'>
+                            <input
+                              class='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500'
+                              type='text'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={transacFee}
+                            />
+                          </div>
+                        </div>
+                        <div className='mt-2'>
+                          <label className='inline-flex items-center'>
+                            <input
+                              type='radio'
+                              className='form-radio'
+                              name='accountType'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={cartFee.result.low}
+                            />
+                            <span className='ml-2'>Low</span>
+                          </label>
+                          <label className='inline-flex items-center ml-6'>
+                            <input
+                              type='radio'
+                              className='form-radio'
+                              name='accountType'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={cartFee.result.medium}
+                            />
+                            <span className='ml-2'>Medium</span>
+                          </label>
+                          <label className='inline-flex items-center ml-6'>
+                            <input
+                              type='radio'
+                              className='form-radio'
+                              name='accountType'
+                              onChange={(e) => setTransacFee(e.target.value)}
+                              value={cartFee.result.high}
+                            />
+                            <span className='ml-2'>High</span>
+                          </label>
+                        </div>
+                        {!transacFee && <Warning message='Please Select One' />}
+                      </div>
+                    )}
 
                     <button
                       onClick={() => setStep(STEP_PRICE_LIST)}

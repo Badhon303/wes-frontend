@@ -299,7 +299,7 @@ export default function SellPage() {
               icon: "success",
               text: "Transferred Successfully",
             }).then((res) => {
-              history.push("/orders")
+              history.push("/send")
             })
           } else {
             setLoading(false)
