@@ -242,8 +242,8 @@ export default function ReferralPurchaseUserPage() {
               }
               PurchaseAPI.getTransectionFee(data_tx).then((res) => {
                 if (res.ok) {
-                  setTransacFee("")
                   setCartFee(res.data)
+                  setTransacFee("")
                   // console.log("response", res);
                   // success
                 } else Swal.fire("Error", res.data.message, "error")

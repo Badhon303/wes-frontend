@@ -240,7 +240,7 @@ export default function BuyPage() {
                 (result[0] &&
                   result[0].status === "UNCONFIRMED_PAYMENT_RECEIVED")
             )
-        console.log("res result", result)
+        // console.log("res result", result)
         if (result && result.length > 0) {
           return true
         } else if (result === 0 || result.length < 1) return false
@@ -274,12 +274,12 @@ export default function BuyPage() {
     ) {
       // console.log(etherBalance+'ether bal'+ calcTotal()+ bitcoinBalance)
       //check api
-      console.log("cartItems :", cartItems)
+      // console.log("cartItems :", cartItems)
       let pendingStatus = callOrderApi().then((pendingStatus) => {
         if (pendingStatus === true) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> Sorry! you cannot perform purchase while you have pending order </p>',
+              '<p className="text-2xl text-site-theme"> Sorry! you cannot perform purchase while you have pending order </p>',
             text: "Would you like to see orders list",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Confirm",
@@ -290,12 +290,13 @@ export default function BuyPage() {
             }
           })
         } else {
+          console.log("final data: ", data)
           // data.payment_from_pkey = encryptIpAddress(privateKey)
           setLoading(true)
           PurchaseAPI.submitOrder(data)
             .then((res) => {
-              console.log(res)
-              console.log(`Order Id is: ${res.data.result.order_id}`)
+              console.log("submit order: ", res)
+              // console.log(`Order Id is: ${res.data.result.order_id}`)
               if (res.ok && cartItems.result) {
                 PurchaseAPI.rewardReferralPoint(
                   userInfo.id,
@@ -341,7 +342,7 @@ export default function BuyPage() {
             })
         }
       })
-      console.log("denied", pendingStatus)
+      // console.log("denied", pendingStatus)
     } else {
       Swal.fire({
         title: "You do not have sufficient Balance",
@@ -362,7 +363,7 @@ export default function BuyPage() {
         if (!addresses || !addresses.btc) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> You do not have any Blockchain account. </p>',
+              '<p className="text-2xl text-site-theme"> You do not have any Blockchain account. </p>',
             text: "Create bitcoin accounts",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Create Account",
@@ -409,7 +410,7 @@ export default function BuyPage() {
         if (!addresses || !addresses.eth) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> You do not have any BlockChain account. </p>',
+              '<p className="text-2xl text-site-theme"> You do not have any BlockChain account. </p>',
             text: "Create Blockchain accounts",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Create Account",
@@ -482,7 +483,7 @@ export default function BuyPage() {
         }))
         setLoading(true)
         PurchaseAPI.postCartItems(data).then((res) => {
-          // console.log("cart calculation api: ", res)
+          console.log("cart calculation api: ", res)
           setLoading(false)
           if (res.ok) {
             setStep(STEP_CART_CHECKOUT)
@@ -795,11 +796,11 @@ export default function BuyPage() {
                     {cartItems.result && (
                       <div className='mt-4 mx-auto text-center'>
                         <span className='text-gray-700'>Transection Fee</span>
-                        <div class='md:flex md:items-center'>
-                          <div class='md:w-1/3 ml-16'></div>
-                          <div class='md:w-1/5'>
+                        <div className='md:flex md:items-center'>
+                          <div className='md:w-1/3 ml-16'></div>
+                          <div className='md:w-1/5'>
                             <input
-                              class='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500'
+                              className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500'
                               type='text'
                               onChange={(e) => setTransacFee(e.target.value)}
                               value={transacFee}
