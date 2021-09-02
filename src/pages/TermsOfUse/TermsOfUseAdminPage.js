@@ -37,7 +37,7 @@ export default function TermsOfUseAdminPage() {
   useEffect(() => {
     getTermsOfUse().then((res) => {
       setTeromsOfuse(res.data)
-      console.log(teromsOfuse)
+      // console.log(teromsOfuse)
     })
   }, [])
 
@@ -147,6 +147,8 @@ export default function TermsOfUseAdminPage() {
     }
   }
 
+  // console.log(Object.keys(teromsOfuse)[1])
+
   return (
     <main className='m-6'>
       <p className='text-center text-site-theme font-bold my-6'>
@@ -185,7 +187,8 @@ export default function TermsOfUseAdminPage() {
 
             <div
               className='mx-3 cursor-pointer'
-              onClick={() => handleEdit(Object.keys(teromsOfuse)[0])}
+              onClick={() => handleEdit("preamble")}
+              // onClick={() => handleEdit(teromsOfuse.preamble)}
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -215,6 +218,31 @@ export default function TermsOfUseAdminPage() {
                 <path d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z' />
               </svg>
             </div> */}
+          </div>
+        </div>
+      )}
+      {teromsOfuse && (
+        <div className='my-3  p-4 flex justify-between break-words items-center text-base   border  rounded text-gray-800'>
+          <p>Consent: {teromsOfuse.consent}</p>
+
+          <div className='flex items-center'>
+            <div
+              className='mx-3 cursor-pointer'
+              onClick={() => handleEdit("consent")}
+              // onClick={() => handleEdit(teromsOfuse.preamble)}
+            >
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                enableBackground='new 0 0 24 24'
+                height='24px'
+                viewBox='0 0 24 24'
+                width='24px'
+                fill='#000000'
+              >
+                <rect fill='none' height='24' width='24' />
+                <path d='M3,10h11v2H3V10z M3,8h11V6H3V8z M3,16h7v-2H3V16z M18.01,12.87l0.71-0.71c0.39-0.39,1.02-0.39,1.41,0l0.71,0.71 c0.39,0.39,0.39,1.02,0,1.41l-0.71,0.71L18.01,12.87z M17.3,13.58l-5.3,5.3V21h2.12l5.3-5.3L17.3,13.58z' />
+              </svg>
+            </div>
           </div>
         </div>
       )}

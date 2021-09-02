@@ -10,6 +10,7 @@ import { customStylesModal } from "../../utils/styleFunctions.js"
 import { sendGetRequest, sendPostRequest } from "../../libs/FetchApi"
 
 export default function TermsOfuseEdit({
+  id,
   type: viewType,
   hideButton,
   onClose,
@@ -25,7 +26,7 @@ export default function TermsOfuseEdit({
   useEffect(() => {
     getTermsOfUse().then((res) => {
       setTeromsOfuse(res.data)
-      console.log(teromsOfuse)
+      // console.log(teromsOfuse)
     })
   }, [])
 
@@ -34,6 +35,8 @@ export default function TermsOfuseEdit({
       credential: true,
     })
   }
+
+  // let preamble
   //   const [email, setEmail] = useState(null)
   //   const [newEmail, setNewEmail] = useState({
   //     title: "",
@@ -93,7 +96,11 @@ export default function TermsOfuseEdit({
   //     }))
   //   }
 
-  function handleBody(e) {
+  // let teromsOfuse.body =
+
+  // console.log("id: ", id)
+
+  function handlePreamble(e) {
     let body = e.target.value
     setTeromsOfuse((prev) => ({
       ...prev,
@@ -101,11 +108,19 @@ export default function TermsOfuseEdit({
     }))
   }
 
+  function handleConsent(e) {
+    let body = e.target.value
+    setTeromsOfuse((prev) => ({
+      ...prev,
+      consent: body,
+    }))
+  }
+
   function handleSubmit() {
     let data = {
-      laws: teromsOfuse.laws,
       preamble: teromsOfuse.preamble,
       consent: teromsOfuse.consent,
+      laws: teromsOfuse.laws,
     }
     setLoading(true)
     setTimeout(() => {
@@ -169,7 +184,7 @@ export default function TermsOfuseEdit({
             </div>
           </div>
           <div className='my-6'>
-            {teromsOfuse && viewType === "view" ? (
+            {/* {teromsOfuse && viewType === "view" ? (
               <div className='bg-white shadow px-4 md:px-10 pt-4 md:pt-7 pb-5 overflow-auto'>
                 <div className='my-4'>
                   <p> Subject </p>
@@ -196,11 +211,11 @@ export default function TermsOfuseEdit({
               </div>
             ) : (
               <div />
-            )}
+            )} */}
 
             {teromsOfuse && viewType === "edit" ? (
               <div className='bg-white shadow px-4 md:px-10 pt-4 md:pt-7 pb-5 overflow-auto'>
-                <div className='my-4'>
+                {/* <div className='my-4'>
                   <p> Subject </p>
 
                   <textarea
@@ -210,18 +225,33 @@ export default function TermsOfuseEdit({
                     // onChange={handleEmail}
                     value={teromsOfuse && Object.keys(teromsOfuse)[0]}
                   />
-                </div>
+                </div> */}
 
-                <div className='my-4'>
-                  <p> Body </p>
-                  <textarea
-                    rows='6'
-                    cols='24'
-                    className='w-full resize   border  text-black font-medium p-4 rounded '
-                    onChange={handleBody}
-                    value={teromsOfuse && teromsOfuse.preamble}
-                  />
-                </div>
+                {id === "preamble" && (
+                  <div className='my-4'>
+                    <p> Body </p>
+                    <textarea
+                      rows='6'
+                      cols='24'
+                      className='w-full resize   border  text-black font-medium p-4 rounded '
+                      onChange={handlePreamble}
+                      value={teromsOfuse && teromsOfuse.preamble}
+                    />
+                  </div>
+                )}
+
+                {id === "consent" && (
+                  <div className='my-4'>
+                    <p> Body </p>
+                    <textarea
+                      rows='6'
+                      cols='24'
+                      className='w-full resize   border  text-black font-medium p-4 rounded '
+                      onChange={handleConsent}
+                      value={teromsOfuse && teromsOfuse.consent}
+                    />
+                  </div>
+                )}
 
                 <div className='mb-40 mt-12  flex items-center mx-32'>
                   {!loading && (
