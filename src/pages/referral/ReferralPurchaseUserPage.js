@@ -198,59 +198,65 @@ export default function ReferralPurchaseUserPage() {
       let data = {}
       let data_tx = {}
 
-      if (values) {
-        setLoading(true)
-        let priceCallApi = getDollarPriceApi().then((getDollarPrice) => {
-          getAmountOfCurrencyApi(getDollarPrice, values.currency)
-            .then((amountOfCurrency) => {
-              setLoading(false)
-              data = {
-                refPoint: values.refPoint,
-                currency: values.currency,
-                dollarPrice: getDollarPrice,
-                toAddress:
-                  values.currency === "BTC"
-                    ? addresses.btc.address
-                    : addresses.eth.address,
-                amountOfCurrency: amountOfCurrency,
-                transactionFee: transacFee,
-              }
-              setPurchaseData(data)
-              setStep(STEP_CART_CHECKOUT)
-            })
-            .then((res) => {
-              //   console.log("asha nai: ", res)
-              data_tx = {
-                currency: values.currency,
-                type:
-                  values.currency === "ETH" || values.currency === "BTC"
-                    ? "coin"
-                    : "erc20",
-                from_address:
-                  values.currency === "BTC"
-                    ? addresses.btc.address
-                    : addresses.eth.address,
-                user: userInfo.email,
-                to_address:
-                  values.currency === "BTC"
-                    ? addresses.btc.address
-                    : addresses.eth.address,
-                amount: `${values.refPoint}`,
-                // transaction_fee: transacFee,
-                // pkey: encryptIpAddress(values.privateKey),
-                // from_type: "normal",
-              }
-              PurchaseAPI.getTransectionFee(data_tx).then((res) => {
-                if (res.ok) {
-                  setTransacFee("")
-                  setCartFee(res.data)
-                  // console.log("response", res);
-                  // success
-                } else Swal.fire("Error", res.data.message, "error")
-              })
-            })
-        })
+      data_tx = {
+        currency: values.currency,
+        type:
+          values.currency === "ETH" || values.currency === "BTC"
+            ? "coin"
+            : "erc20",
+        from_address:
+          values.currency === "BTC"
+            ? addresses.btc.address
+            : addresses.eth.address,
+        user: userInfo.email,
+        to_address:
+          values.currency === "BTC"
+            ? addresses.btc.address
+            : addresses.eth.address,
+        amount: `${values.refPoint}`,
+        // transaction_fee: transacFee,
+        // pkey: encryptIpAddress(values.privateKey),
+        // from_type: "normal",
       }
+      PurchaseAPI.getTransectionFee(data_tx)
+        .then((res) => {
+          if (res.ok) {
+            // setTransacFee("")
+            setCartFee(res.data)
+            // console.log("response", res);
+            // success
+          } else Swal.fire("Error", res.data.message, "error")
+        })
+        .then(() => {
+          if (values && cartFee.result) {
+            setLoading(true)
+            let priceCallApi = getDollarPriceApi().then((getDollarPrice) => {
+              getAmountOfCurrencyApi(getDollarPrice, values.currency).then(
+                (amountOfCurrency) => {
+                  setLoading(false)
+                  data = {
+                    refPoint: values.refPoint,
+                    currency: values.currency,
+                    dollarPrice: getDollarPrice,
+                    toAddress:
+                      values.currency === "BTC"
+                        ? addresses.btc.address
+                        : addresses.eth.address,
+                    amountOfCurrency: amountOfCurrency,
+                    transactionFee: transacFee
+                      ? transacFee
+                      : cartFee.result.medium,
+                  }
+                  setPurchaseData(data)
+                  setStep(STEP_CART_CHECKOUT)
+                }
+              )
+              // .then((res) => {
+
+              // })
+            })
+          }
+        })
     },
   })
 
@@ -259,31 +265,71 @@ export default function ReferralPurchaseUserPage() {
   }
 
   function handleSubmitCart() {
-    setLoading(true)
+    Swal.fire({
+      title: "Send OTP",
+      showCancelButton: true,
+      confirmButtonText: "Send",
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
+        PurchaseAPI.getOTP()
+      },
+      // allowOutsideClick: () => !Swal.isLoading(),
+    })
+      .then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "An OTP has been sent to your email addres, Please submit",
+            input: "text",
+            showCancelButton: true,
+            confirmButtonText: "Submit",
+            showLoaderOnConfirm: true,
+            preConfirm: (otpValue) => {
+              // PurchaseAPI.getOTP()
+              // console.log("otp call hoise")
+              // .then((response) => {
+              // setOtp(otpValue)
 
-    PurchaseAPI.submitReferralOrder(purchaseData)
-      .then((res) => {
-        setLoading(false)
-        if (res.ok) {
-          Swal.fire({
-            title: "Success",
-            icon: "success",
-            text: "Order submitted successfully",
-          }).then((res) => {
-            setStep(STEP_PRICE_LIST)
-            history.push("/referral-purchase-history")
-          })
-        } else {
-          Swal.fire({
-            title: "Error",
-            icon: "error",
-            text: res.data.message,
+              purchaseData.otp = otpValue
+
+              // console.log(otpValue)
+            },
+            // allowOutsideClick: () => !Swal.isLoading(),
+          }).then(() => {
+            // console.log("otp data: ", data.otp)
+
+            setLoading(true)
+
+            PurchaseAPI.submitReferralOrder(purchaseData)
+              .then((res) => {
+                setLoading(false)
+                if (res.ok) {
+                  Swal.fire({
+                    title: "Success",
+                    icon: "success",
+                    text: "Order submitted successfully",
+                  }).then((res) => {
+                    setStep(STEP_PRICE_LIST)
+                    history.push("/referral-purchase-history")
+                  })
+                } else {
+                  Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: res.data.message,
+                  })
+                }
+              })
+              .catch((err) => {
+                setLoading(false)
+                Swal.fire("Error", err.message, "error")
+              })
           })
         }
       })
-      .catch((err) => {
-        setLoading(false)
-        Swal.fire("Error", err.message, "error")
+
+      // })
+      .catch((error) => {
+        Swal.showValidationMessage(`Request failed: ${error}`)
       })
   }
 
@@ -502,7 +548,7 @@ export default function ReferralPurchaseUserPage() {
                             Transaction Fee
                           </td>
                           <td className='px-2 text-center'>
-                            {transacFee}
+                            {transacFee ? transacFee : cartFee.result.medium}
                             {formik.values.currency === "WOLF" ||
                             formik.values.currency === "EAGLE" ||
                             formik.values.currency === "SNOW" ||
@@ -554,6 +600,7 @@ export default function ReferralPurchaseUserPage() {
                               type='radio'
                               className='form-radio'
                               name='accountType'
+                              checked
                               onChange={(e) => setTransacFee(e.target.value)}
                               value={cartFee.result.medium}
                             />
@@ -570,7 +617,7 @@ export default function ReferralPurchaseUserPage() {
                             <span className='ml-2'>High</span>
                           </label>
                         </div>
-                        {!transacFee && <Warning message='Please Select One' />}
+                        {/* {!transacFee && <Warning message='Please Select One' />} */}
                       </div>
                     )}
 

@@ -202,7 +202,7 @@ export default function GPPointsPurchasePage() {
         }
         PurchaseAPI.getTransectionFee(data_tx).then((res) => {
           if (res.ok) {
-            setTransacFee("")
+            // setTransacFee("")
             setCartFee(res.data)
             // console.log("response", res);
             // success
@@ -290,8 +290,6 @@ export default function GPPointsPurchasePage() {
   }
 
   function handleSubmitCart() {
-    setLoading(true)
-
     let data = {
       coin: gpPrice.coin,
       unit: gpPrice.unit,
@@ -301,36 +299,77 @@ export default function GPPointsPurchasePage() {
       totalCoinAmount: gpPrice.totalCoinAmount,
       goldPointAmount: gpPrice.goldPointAmount,
       toAddress: getAddress(selectedCoin),
-      transactionFee: transacFee,
+      transactionFee: transacFee ? transacFee : cartFee.result.medium,
     }
     // "toAddress": "0x8613c52A6ae2ad6442457F31Ad4aEA30CB8647eD"
 
-    console.log(getAddress(selectedCoin), "afdsfadsfdsafsdf")
+    // console.log(getAddress(selectedCoin), "afdsfadsfdsafsdf")
 
-    PurchaseAPI.submitGPOrder(data)
-      .then((res) => {
-        setLoading(false)
-        if (res.ok) {
-          console.log(res, "res check")
+    Swal.fire({
+      title: "Send OTP",
+      showCancelButton: true,
+      confirmButtonText: "Send",
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
+        PurchaseAPI.getOTP()
+      },
+      // allowOutsideClick: () => !Swal.isLoading(),
+    })
+      .then((result) => {
+        if (result.isConfirmed) {
           Swal.fire({
-            title: "Success",
-            icon: "success",
-            text: res.data.message,
-          }).then((res) => {
-            setPurchaseModal(!purchaseModal)
-            window.location.reload(true)
-          })
-        } else {
-          Swal.fire({
-            title: "Error",
-            icon: "error",
-            text: res.data.message,
+            title: "An OTP has been sent to your email addres, Please submit",
+            input: "text",
+            showCancelButton: true,
+            confirmButtonText: "Submit",
+            showLoaderOnConfirm: true,
+            preConfirm: (otpValue) => {
+              // PurchaseAPI.getOTP()
+              // console.log("otp call hoise")
+              // .then((response) => {
+              // setOtp(otpValue)
+
+              data.otp = otpValue
+
+              // console.log(otpValue)
+            },
+            // allowOutsideClick: () => !Swal.isLoading(),
+          }).then(() => {
+            // console.log("otp data: ", data.otp)
+
+            setLoading(true)
+            PurchaseAPI.submitGPOrder(data)
+              .then((res) => {
+                setLoading(false)
+                if (res.ok) {
+                  // console.log(res, "res check")
+                  Swal.fire({
+                    title: "Success",
+                    icon: "success",
+                    text: res.data.message,
+                  }).then((res) => {
+                    setPurchaseModal(!purchaseModal)
+                    history.push("/gp-history")
+                  })
+                } else {
+                  Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: res.data.message,
+                  })
+                }
+              })
+              .catch((err) => {
+                setLoading(false)
+                Swal.fire("Error", err.message, "error")
+              })
           })
         }
       })
-      .catch((err) => {
-        setLoading(false)
-        Swal.fire("Error", err.message, "error")
+
+      // })
+      .catch((error) => {
+        Swal.showValidationMessage(`Request failed: ${error}`)
       })
   }
 
@@ -564,15 +603,20 @@ export default function GPPointsPurchasePage() {
                                   <td className='break-all  px-2 py-2 border-r border-black text-black font-bold w-1/2'>
                                     transaction Fee
                                   </td>
-                                  <td className='break-all px-2 text-center font-bold w-1/2'>
-                                    {transacFee}
-                                    {selectedCoin === "WOLF" ||
-                                    selectedCoin === "EAGLE" ||
-                                    selectedCoin === "SNOW" ||
-                                    selectedCoin === "ETH"
-                                      ? "ETH"
-                                      : "BTC"}
-                                  </td>
+
+                                  {cartFee.result && (
+                                    <td className='break-all px-2 text-center font-bold w-1/2'>
+                                      {transacFee
+                                        ? transacFee
+                                        : cartFee.result.medium}
+                                      {selectedCoin === "WOLF" ||
+                                      selectedCoin === "EAGLE" ||
+                                      selectedCoin === "SNOW" ||
+                                      selectedCoin === "ETH"
+                                        ? "ETH"
+                                        : "BTC"}
+                                    </td>
+                                  )}
                                 </tr>
 
                                 {/* <tr className=''>
@@ -639,13 +683,14 @@ export default function GPPointsPurchasePage() {
                               type='radio'
                               className='form-radio'
                               name='accountType'
+                              checked
                               onChange={(e) => setTransacFee(e.target.value)}
                               value={cartFee.result.high}
                             />
                             <span className='ml-2'>High</span>
                           </label>
                         </div>
-                        {!transacFee && <Warning message='Please Select One' />}
+                        {/* {!transacFee && <Warning message='Please Select One' />} */}
                       </div>
                     )}
 

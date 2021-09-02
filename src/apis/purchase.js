@@ -84,3 +84,7 @@ export function setTransfer(data) {
     credential: true,
   })
 }
+
+export function getOTP() {
+  return sendGetRequest(`${BASE_URL}/users/otp`, null, { credential: true })
+}

@@ -102,6 +102,7 @@ export default function BuyPage() {
   const [btcInfo, setBtcInfo] = useState(null)
 
   const [transacFee, setTransacFee] = useState("")
+  // const [otp, setOtp] = useState("")
 
   const getUserApi = async () => {
     const myHeaders = new Headers()
@@ -122,6 +123,9 @@ export default function BuyPage() {
         setUser(response.user)
         setAddresses({
           btc: response.btcAccount,
+          inputAttributes: {
+            autocapitalize: "off",
+          },
           eth: response.ethAccount,
         })
         setBtcInfo({
@@ -240,7 +244,7 @@ export default function BuyPage() {
                 (result[0] &&
                   result[0].status === "UNCONFIRMED_PAYMENT_RECEIVED")
             )
-        console.log("res result", result)
+        // console.log("res result", result)
         if (result && result.length > 0) {
           return true
         } else if (result === 0 || result.length < 1) return false
@@ -248,7 +252,7 @@ export default function BuyPage() {
     } else return false
   }
 
-  // console.log("check",cartItems);
+  // console.log("check", cartItems)
   function handleSubmitCart() {
     let data = {}
     data.items = formik.values.items.map((item) => ({
@@ -263,8 +267,10 @@ export default function BuyPage() {
     if (user) data.payment_from_user = user.email
     data.token_received_address = addresses.eth.address
     data.transaction_fee = transacFee
+      ? transacFee
+      : cartItems.result.transaction_fee.medium
 
-    if (transacFee === "") return
+    // if (transacFee === "") return
     // formik.values.payment_currency === "BTC" ? "BTC" : "ETH"
 
     if (
@@ -274,7 +280,7 @@ export default function BuyPage() {
     ) {
       // console.log(etherBalance+'ether bal'+ calcTotal()+ bitcoinBalance)
       //check api
-      console.log("cartItems :", cartItems)
+      // console.log("cartItems :", cartItems)
       let pendingStatus = callOrderApi().then((pendingStatus) => {
         if (pendingStatus === true) {
           Swal.fire({
@@ -290,58 +296,98 @@ export default function BuyPage() {
             }
           })
         } else {
-          // data.payment_from_pkey = encryptIpAddress(privateKey)
-          setLoading(true)
-          PurchaseAPI.submitOrder(data)
-            .then((res) => {
-              console.log(res)
-              console.log(`Order Id is: ${res.data.result.order_id}`)
-              if (res.ok && cartItems.result) {
-                PurchaseAPI.rewardReferralPoint(
-                  userInfo.id,
-                  res.data.result.order_id,
-                  cartItems.result.amount_usd
-                )
-                  .then((response) => {
-                    setLoading(false)
-                    if (response.ok) {
-                      setLoading(false)
-                      Swal.fire({
-                        title: "Success",
-                        icon: "success",
-                        text: "Order submitted successfully",
-                      }).then((res) => {
-                        history.push("/orders")
-                      })
-                    } else {
-                      setLoading(false)
-                      Swal.fire({
-                        title: "Error",
-                        icon: "error",
-                        text: res.data.message,
-                      })
-                    }
-                  })
-                  .catch((err) => {
-                    setLoading(false)
-                    Swal.fire("Error", err.message, "error")
-                  })
-              } else {
-                setLoading(false)
+          Swal.fire({
+            title: "Send OTP",
+            showCancelButton: true,
+            confirmButtonText: "Send",
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+              PurchaseAPI.getOTP()
+            },
+            // allowOutsideClick: () => !Swal.isLoading(),
+          })
+            .then((result) => {
+              if (result.isConfirmed) {
                 Swal.fire({
-                  title: "Error",
-                  icon: "error",
-                  text: res.data.message,
+                  title:
+                    "An OTP has been sent to your email addres, Please submit",
+                  input: "text",
+                  showCancelButton: true,
+                  confirmButtonText: "Submit",
+                  showLoaderOnConfirm: true,
+                  preConfirm: (otpValue) => {
+                    // PurchaseAPI.getOTP()
+                    // console.log("otp call hoise")
+                    // .then((response) => {
+                    // setOtp(otpValue)
+                    data.otp = otpValue
+
+                    console.log(otpValue)
+                  },
+                  // allowOutsideClick: () => !Swal.isLoading(),
+                }).then(() => {
+                  // console.log("otp data: ", data.otp)
+
+                  setLoading(true)
+                  PurchaseAPI.submitOrder(data)
+                    .then((res) => {
+                      console.log("submit order: ", res)
+                      // console.log(`Order Id is: ${res.data.result.order_id}`)
+                      if (res.ok && cartItems.result) {
+                        PurchaseAPI.rewardReferralPoint(
+                          userInfo.id,
+                          res.data.result.order_id,
+                          cartItems.result.amount_usd
+                        )
+                          .then((response) => {
+                            setLoading(false)
+                            if (response.ok) {
+                              setLoading(false)
+                              Swal.fire({
+                                title: "Success",
+                                icon: "success",
+                                text: "Order submitted successfully",
+                              }).then((res) => {
+                                // setOtp("")
+                                history.push("/orders")
+                              })
+                            } else {
+                              setLoading(false)
+                              Swal.fire({
+                                title: "Error",
+                                icon: "error",
+                                text: res.data.message,
+                              })
+                            }
+                          })
+                          .catch((err) => {
+                            setLoading(false)
+                            Swal.fire("Error", err.message, "error")
+                          })
+                      } else {
+                        setLoading(false)
+                        Swal.fire({
+                          title: "Error",
+                          icon: "error",
+                          text: res.data.message,
+                        })
+                      }
+                    })
+                    .catch((err) => {
+                      setLoading(false)
+                      Swal.fire("Error", err.message, "error")
+                    })
                 })
               }
             })
-            .catch((err) => {
-              setLoading(false)
-              Swal.fire("Error", err.message, "error")
+
+            // })
+            .catch((error) => {
+              Swal.showValidationMessage(`Request failed: ${error}`)
             })
         }
       })
-      console.log("denied", pendingStatus)
+      // console.log("denied", pendingStatus)
     } else {
       Swal.fire({
         title: "You do not have sufficient Balance",
@@ -482,11 +528,11 @@ export default function BuyPage() {
         }))
         setLoading(true)
         PurchaseAPI.postCartItems(data).then((res) => {
-          // console.log("cart calculation api: ", res)
+          console.log("cart calculation api: ", res)
           setLoading(false)
           if (res.ok) {
             setStep(STEP_CART_CHECKOUT)
-            setTransacFee("")
+            // setTransacFee("")
             setCartItems(res.data)
             if (btcInfo) {
               if (btcInfo.ether) {
@@ -538,7 +584,12 @@ export default function BuyPage() {
 
   function calcTotal() {
     if (cartItems.result) {
-      return calcSubTotal() + parseFloat(transacFee)
+      return (
+        calcSubTotal() +
+        parseFloat(
+          transacFee ? transacFee : cartItems.result.transaction_fee.medium
+        )
+      )
     }
   }
 
@@ -764,7 +815,9 @@ export default function BuyPage() {
                               Transaction Fee
                             </td>
                             <td className='px-2 text-right'>
-                              {transacFee}{" "}
+                              {transacFee
+                                ? transacFee
+                                : cartItems.result.transaction_fee.medium}{" "}
                               {formik.values.payment_currency === "BTC"
                                 ? "BTC"
                                 : "ETH"}
@@ -822,7 +875,10 @@ export default function BuyPage() {
                               type='radio'
                               className='form-radio'
                               name='accountType'
-                              onChange={(e) => setTransacFee(e.target.value)}
+                              checked
+                              onChange={(e) => {
+                                setTransacFee(e.target.value)
+                              }}
                               value={cartItems.result.transaction_fee.medium}
                             />
                             <span className='ml-2'>Medium</span>
@@ -838,7 +894,7 @@ export default function BuyPage() {
                             <span className='ml-2'>High</span>
                           </label>
                         </div>
-                        {!transacFee && <Warning message='Please Select One' />}
+                        {/* {!transacFee && <Warning message='Please Select One' />} */}
                       </div>
                     )}
 

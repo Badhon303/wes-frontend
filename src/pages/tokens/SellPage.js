@@ -21,7 +21,7 @@ import {
   getSnowBalance,
   getWolfBalance,
 } from "../../apis/balance"
-import { getTransectionFee, setTransfer } from "../../apis/purchase"
+import { getTransectionFee, setTransfer, getOTP } from "../../apis/purchase"
 import { customStylesModal2 } from "../../utils/styleFunctions"
 
 const STEP_PRICE_LIST = "step-price-list"
@@ -243,7 +243,7 @@ export default function SellPage() {
           getTransectionFee(data).then((res) => {
             // setLoading(false)
             if (res.ok) {
-              setTransacFee("")
+              // setTransacFee("")
               setCartFee(res.data)
               setStep(STEP_CART_CHECKOUT)
 
@@ -266,7 +266,7 @@ export default function SellPage() {
       data.user = user.email
       data.to_address = formik.values.address
       data.amount = `${formik.values.money}`
-      data.transaction_fee = transacFee
+      data.transaction_fee = transacFee ? transacFee : cartFee.result.medium
     }
     if (user.role === "admin") {
       ;(data.currency = tokens),
@@ -276,7 +276,7 @@ export default function SellPage() {
         (data.user = user.email),
         (data.to_address = formik.values.address),
         (data.amount = `${formik.values.money}`),
-        (data.transaction_fee = transacFee)
+        (data.transaction_fee = transacFee ? transacFee : cartFee.result.medium)
     }
 
     // if (!privateKey) return
@@ -286,34 +286,114 @@ export default function SellPage() {
     //check api
     if (data) {
       // data.payment_from_pkey = encryptIpAddress(privateKey)
-      setLoading(true)
-      setTransfer(data)
-        .then((res) => {
-          console.log(res)
-          // console.log(`Order Id is: ${res.data.result.order_id}`)
-          setLoading(false)
-          if (res.ok) {
-            setLoading(false)
+      //   Swal.fire({
+      //     title:
+      //       '<p class="text-2xl text-site-theme"> Sorry! you cannot perform purchase while you have pending order </p>',
+      //     text: "Would you like to see orders list",
+      //     confirmButtonColor: "#ff8c00",
+      //     confirmButtonText: "Confirm",
+      //     showCancelButton: true,
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
+      //       history.push("/orders")
+      //     }
+      //   })
+      // } else {
+      Swal.fire({
+        title: "Send OTP",
+        showCancelButton: true,
+        confirmButtonText: "Send",
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+          getOTP()
+        },
+        // allowOutsideClick: () => !Swal.isLoading(),
+      })
+        .then((result) => {
+          if (result.isConfirmed) {
             Swal.fire({
-              title: "Success",
-              icon: "success",
-              text: "Transferred Successfully",
-            }).then((res) => {
-              history.push("/send")
-            })
-          } else {
-            setLoading(false)
-            Swal.fire({
-              title: "Error",
-              icon: "error",
-              text: res.data.message,
+              title: "An OTP has been sent to your email addres, Please submit",
+              input: "text",
+              showCancelButton: true,
+              confirmButtonText: "Submit",
+              showLoaderOnConfirm: true,
+              preConfirm: (otpValue) => {
+                // PurchaseAPI.getOTP()
+                // console.log("otp call hoise")
+                // .then((response) => {
+                // setOtp(otpValue)
+                data.otp = otpValue
+
+                // console.log(otpValue)
+              },
+              // allowOutsideClick: () => !Swal.isLoading(),
+            }).then(() => {
+              // console.log("otp data: ", data.otp)
+
+              setLoading(true)
+              setTransfer(data)
+                .then((res) => {
+                  console.log(res)
+                  // console.log(`Order Id is: ${res.data.result.order_id}`)
+                  setLoading(false)
+                  if (res.ok) {
+                    setLoading(false)
+                    Swal.fire({
+                      title: "Success",
+                      icon: "success",
+                      text: "Transferred Successfully",
+                    }).then((res) => {
+                      history.go("/send")
+                    })
+                  } else {
+                    setLoading(false)
+                    Swal.fire({
+                      title: "Error",
+                      icon: "error",
+                      text: res.data.message,
+                    })
+                  }
+                })
+                .catch((err) => {
+                  setLoading(false)
+                  Swal.fire("Error", err.message, "error")
+                })
             })
           }
         })
-        .catch((err) => {
-          setLoading(false)
-          Swal.fire("Error", err.message, "error")
+
+        // })
+        .catch((error) => {
+          Swal.showValidationMessage(`Request failed: ${error}`)
         })
+      // setLoading(true)
+      // setTransfer(data)
+      //   .then((res) => {
+      //     console.log(res)
+      //     // console.log(`Order Id is: ${res.data.result.order_id}`)
+      //     setLoading(false)
+      //     if (res.ok) {
+      //       setLoading(false)
+      //       Swal.fire({
+      //         title: "Success",
+      //         icon: "success",
+      //         text: "Transferred Successfully",
+      //       }).then((res) => {
+      //         history.push("/send")
+      //       })
+      //     } else {
+      //       setLoading(false)
+      //       Swal.fire({
+      //         title: "Error",
+      //         icon: "error",
+      //         text: res.data.message,
+      //       })
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     setLoading(false)
+      //     Swal.fire("Error", err.message, "error")
+      //   })
     }
   }
 
@@ -569,7 +649,8 @@ export default function SellPage() {
                             Transaction Fee
                           </td>
                           <td className='px-2 text-right'>
-                            {transacFee} {tokens === "BTC" ? "BTC" : "ETH"}
+                            {transacFee ? transacFee : cartFee.result.medium}{" "}
+                            {tokens === "BTC" ? "BTC" : "ETH"}
                           </td>
                         </tr>
                       )}
@@ -578,7 +659,9 @@ export default function SellPage() {
                         <td className='px-2 text-right'>
                           {/* {calcTotal()}{" "} */}
                           {parseFloat(formik.values.money) +
-                            parseFloat(transacFee)}
+                            parseFloat(
+                              transacFee ? transacFee : cartFee.result.medium
+                            )}
                           {tokens === "BTC" ? "BTC" : "ETH"}
                         </td>
                       </tr>
@@ -624,6 +707,7 @@ export default function SellPage() {
                             type='radio'
                             className='form-radio'
                             name='accountType'
+                            checked
                             onChange={(e) => setTransacFee(e.target.value)}
                             value={cartFee.result.medium}
                           />
@@ -640,7 +724,7 @@ export default function SellPage() {
                           <span className='ml-2'>High</span>
                         </label>
                       </div>
-                      {!transacFee && <Warning message='Please Select One' />}
+                      {/* {!transacFee && <Warning message='Please Select One' />} */}
                     </div>
                   )}
 
