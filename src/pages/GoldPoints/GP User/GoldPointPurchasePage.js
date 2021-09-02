@@ -204,6 +204,7 @@ export default function GPPointsPurchasePage() {
           if (res.ok) {
             // setTransacFee("")
             setCartFee(res.data)
+            // setTransacFee("")
             // console.log("response", res);
             // success
           } else Swal.fire("Error", res.data.message, "error")
@@ -673,6 +674,7 @@ export default function GPPointsPurchasePage() {
                               type='radio'
                               className='form-radio'
                               name='accountType'
+                              checked
                               onChange={(e) => setTransacFee(e.target.value)}
                               value={cartFee.result.medium}
                             />
@@ -683,7 +685,6 @@ export default function GPPointsPurchasePage() {
                               type='radio'
                               className='form-radio'
                               name='accountType'
-                              checked
                               onChange={(e) => setTransacFee(e.target.value)}
                               value={cartFee.result.high}
                             />

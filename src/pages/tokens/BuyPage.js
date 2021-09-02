@@ -285,7 +285,7 @@ export default function BuyPage() {
         if (pendingStatus === true) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> Sorry! you cannot perform purchase while you have pending order </p>',
+              '<p className="text-2xl text-site-theme"> Sorry! you cannot perform purchase while you have pending order </p>',
             text: "Would you like to see orders list",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Confirm",
@@ -408,7 +408,7 @@ export default function BuyPage() {
         if (!addresses || !addresses.btc) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> You do not have any Blockchain account. </p>',
+              '<p className="text-2xl text-site-theme"> You do not have any Blockchain account. </p>',
             text: "Create bitcoin accounts",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Create Account",
@@ -455,7 +455,7 @@ export default function BuyPage() {
         if (!addresses || !addresses.eth) {
           Swal.fire({
             title:
-              '<p class="text-2xl text-site-theme"> You do not have any BlockChain account. </p>',
+              '<p className="text-2xl text-site-theme"> You do not have any BlockChain account. </p>',
             text: "Create Blockchain accounts",
             confirmButtonColor: "#ff8c00",
             confirmButtonText: "Create Account",
@@ -848,11 +848,11 @@ export default function BuyPage() {
                     {cartItems.result && (
                       <div className='mt-4 mx-auto text-center'>
                         <span className='text-gray-700'>Transection Fee</span>
-                        <div class='md:flex md:items-center'>
-                          <div class='md:w-1/3 ml-16'></div>
-                          <div class='md:w-1/5'>
+                        <div className='md:flex md:items-center'>
+                          <div className='md:w-1/3 ml-16'></div>
+                          <div className='md:w-1/5'>
                             <input
-                              class='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500'
+                              className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500'
                               type='text'
                               onChange={(e) => setTransacFee(e.target.value)}
                               value={transacFee}
