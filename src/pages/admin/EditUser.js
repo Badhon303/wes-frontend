@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useFormik } from "formik";
-import Swal from "sweetalert2";
-import Warning from "../../components/Message/warning";
-import * as FetchApi from "../../libs/FetchApi";
-import { BASE_URL } from "../../constants";
-import Cookies from "js-cookie";
-import Loader from "react-loader-spinner";
-import Layout from "../../components/Layout/Layout";
-import { CountryDropdown } from "react-country-region-selector";
-import CustomLoader from "../../components/CustomLoader/CustomLoader";
-import DropDownMenuWithIcon from "../../components/Dropdown/DropDownWithMenu";
+import React, { useEffect, useState } from "react"
+import { useFormik } from "formik"
+import Swal from "sweetalert2"
+import Warning from "../../components/Message/warning"
+import * as FetchApi from "../../libs/FetchApi"
+import { BASE_URL } from "../../constants"
+import Cookies from "js-cookie"
+import Loader from "react-loader-spinner"
+import Layout from "../../components/Layout/Layout"
+import { CountryDropdown } from "react-country-region-selector"
+import CustomLoader from "../../components/CustomLoader/CustomLoader"
+import DropDownMenuWithIcon from "../../components/Dropdown/DropDownWithMenu"
 
 // Nationality
 // First name/kana/Kanji
@@ -27,7 +27,7 @@ import DropDownMenuWithIcon from "../../components/Dropdown/DropDownWithMenu";
 // Country
 
 const validate = (values) => {
-  const errors = {};
+  const errors = {}
   const {
     firstName,
     middleName,
@@ -41,52 +41,52 @@ const validate = (values) => {
     city,
     state,
     zipcode,
-  } = values;
+  } = values
 
   if (!nickName) {
-    errors.nickkNme = "Required";
+    errors.nickkNme = "Required"
   }
   // else if (!(nickName.length >= 3 && nickName.length < 30)) {
   //   errors.nickName = 'Must be greater than 3 and less than 30 characters';
   // }
   else if (!/^[a-zA-Z]+$/i.test(values.nickName)) {
-    errors.nickName = "Nickname contains characters only";
+    errors.nickName = "Nickname contains characters only"
   }
 
   if (!firstName) {
-    errors.firstName = "Required";
+    errors.firstName = "Required"
   }
   // else if (!(firstName.length < 200)) {
   //   errors.firstName = 'Must be less than 200 character';
   // }
   else if (!/^[a-zA-Z]+[.]*$/i.test(values.firstName)) {
-    errors.firstName = "Firstname contains characters and dot only";
+    errors.firstName = "Firstname contains characters and dot only"
   }
 
   if (middleName && middleName.length > 200) {
-    errors.middleName = "Must be less than 200 character";
+    errors.middleName = "Must be less than 200 character"
   } else if (!/^$|^[a-zA-Z]+$/i.test(values.middleName)) {
-    errors.middleName = "Middle name contains characters only";
+    errors.middleName = "Middle name contains characters only"
   }
 
   if (!lastName) {
-    errors.lastName = "Required";
+    errors.lastName = "Required"
   }
 
   if (!gender) {
-    errors.gender = "Required";
+    errors.gender = "Required"
   } else if (!["male", "female", "other"].includes(gender)) {
-    errors.gender = "Gender must be either male, female or other";
+    errors.gender = "Gender must be either male, female or other"
   }
 
   if (!dob) {
-    errors.dob = "Required";
+    errors.dob = "Required"
   } else {
-    const selectedDate = new Date(dob);
-    const todaysdate = new Date();
-    todaysdate.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(dob)
+    const todaysdate = new Date()
+    todaysdate.setHours(0, 0, 0, 0)
     if (!(selectedDate.getTime() < todaysdate.getTime())) {
-      errors.dob = "Date of birth must not be toady and forward";
+      errors.dob = "Date of birth must not be toady and forward"
     }
   }
   // else if (new Date(dob).getMilliseconds() >= new Date().getMilliseconds()) {
@@ -102,9 +102,9 @@ const validate = (values) => {
   // }
 
   if (!phone) {
-    errors.phone = "Required";
+    errors.phone = "Required"
   } else if (!/^[0][1-9]\d{9}$|^[1-9]\d{9}$/i.test(values.phone)) {
-    errors.phone = "Please enter 11 numbers";
+    errors.phone = "Please enter 11 numbers"
   }
 
   // if (!nationalId) {
@@ -115,21 +115,21 @@ const validate = (values) => {
   // }
 
   if (!street) {
-    errors.street = "Required";
+    errors.street = "Required"
   }
 
   if (!city) {
-    errors.city = "Required";
+    errors.city = "Required"
   }
 
   if (!state) {
-    errors.state = "Required";
+    errors.state = "Required"
   }
 
   if (!zipcode) {
-    errors.zipcode = "Required";
+    errors.zipcode = "Required"
   } else if (!/^[0-9]+(-[0-9]+)?$/i.test(values.zipcode)) {
-    errors.zipcode = "Zipcode can only contain numbers and hyphen";
+    errors.zipcode = "Zipcode can only contain numbers and hyphen"
   }
 
   // if (password) {
@@ -140,56 +140,55 @@ const validate = (values) => {
   //     // check if password has at least 1 number and other conditions
   // }
 
-  console.log(errors, "err");
+  // console.log(errors, "err");
 
-  return errors;
-};
+  return errors
+}
 
 export default function UserEditModal(props) {
-  const userId = props.match.params.id;
-  const [status, setStatus] = useState(null);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [introducerEmail, setIntroducerEmail] = useState("");
-  const [introducerName, setIntroducerName] = useState("");
+  const userId = props.match.params.id
+  const [status, setStatus] = useState(null)
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [introducerEmail, setIntroducerEmail] = useState("")
+  const [introducerName, setIntroducerName] = useState("")
 
   useEffect(() => {
-    if (userId && !user) getUserInfo(userId);
-  }, []);
+    if (userId && !user) getUserInfo(userId)
+  }, [])
 
   const [country, setCountry] = useState(
     user && user.nationality ? user.nationality : ""
-  );
+  )
 
   function handleCountryValue(e) {
-    setCountry(e);
-    formik.handleChange(e);
+    setCountry(e)
+    formik.handleChange(e)
   }
 
   const getUserInfo = async (userId) => {
-    setLoading(true);
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"));
+    setLoading(true)
+    const myHeaders = new Headers()
+    myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"))
     const data = await fetch(`${BASE_URL}/users/${userId}`, {
       method: "GET",
       headers: myHeaders,
-    });
-    const response = await data.json();
+    })
+    const response = await data.json()
 
     if (response) {
-      setLoading(false);
+      setLoading(false)
 
-      if (response.code === 401) history.push("/signin");
+      if (response.code === 401) history.push("/signin")
       else if (response.code === 404)
-        console.log("Whoops..", "No user data found", "error");
+        console.log("Whoops..", "No user data found", "error")
       else {
-        setUser(response.user);
-        setCountry(response.user.nationality);
-        setIntroducerName(response.introducerName);
+        setUser(response.user)
+        setCountry(response.user.nationality)
+        setIntroducerName(response.introducerName)
       }
-    } else console.log("Whoops..", "No user data found", "error");
-  };
-
+    } else console.log("Whoops..", "No user data found", "error")
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -215,11 +214,11 @@ export default function UserEditModal(props) {
     // validate,
     onSubmit: (values) => {
       if (country) {
-        values.nationality = country;
+        values.nationality = country
       }
 
       // UserAPI.createUser(values).then(res => { handleSuccess() }).catch(err => { handleError() });
-      setLoading(true);
+      setLoading(true)
 
       if (introducerEmail) {
         FetchApi.sendPutRequest(
@@ -232,13 +231,13 @@ export default function UserEditModal(props) {
           if (res.ok) {
             // silent update
           } else {
-            Swal.fire("Error", res.data.message, "error");
+            Swal.fire("Error", res.data.message, "error")
           }
-        });
+        })
       }
 
       if (status !== null) {
-        let valuesD = { userStatus: status };
+        let valuesD = { userStatus: status }
         FetchApi.sendPutRequest(
           `/users/${userId}/change-user-status`,
           valuesD,
@@ -247,16 +246,16 @@ export default function UserEditModal(props) {
           .then((res) => {
             if (res.ok) {
               // success
-              console.log("success");
+              console.log("success")
             } else {
               // handle err
-              console.log(res.data.message);
+              console.log(res.data.message)
             }
           })
           .catch((err) => {
             // something unwanted happened
-            console.log(err.message);
-          });
+            console.log(err.message)
+          })
       }
 
       FetchApi.sendPutRequest(`/users/${userId}`, values, { credential: true })
@@ -267,65 +266,64 @@ export default function UserEditModal(props) {
               "User updated",
               "User has been updated successfully",
               "success"
-            );
-            formik.resetForm();
+            )
+            formik.resetForm()
           } else {
             // handle err
-            Swal.fire("Error", res.data.message, "error");
+            Swal.fire("Error", res.data.message, "error")
           }
         })
         .catch((err) => {
-
-          Swal.fire("Error", err.message, "error");
+          Swal.fire("Error", err.message, "error")
         })
         .finally(() => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     },
-  });
+  })
 
   function updateUserStatus(e) {
-    setStatus(e.value);
+    setStatus(e.value)
   }
 
   if (user) {
     return (
       <>
         <Layout>
-          <div className="mt-10 sm:mt-0 w-full px-6 ">
+          <div className='mt-10 sm:mt-0 w-full px-6 '>
             {loading && (
-              <div className="flex justify-center items-center">
+              <div className='flex justify-center items-center'>
                 <Loader
-                  type="Circles"
-                  color="#ff8c00"
+                  type='Circles'
+                  color='#ff8c00'
                   height={100}
                   width={100}
                   timeout={7000} //3 secs
-                  className=" inline-block align-middle absolute  z-50  "
+                  className=' inline-block align-middle absolute  z-50  '
                 />
               </div>
             )}
 
-            <div className="md:grid md:grid-cols-3 md:gap-6">
-              <div className="mt-5 md:mt-0 md:col-span-3">
+            <div className='md:grid md:grid-cols-3 md:gap-6'>
+              <div className='mt-5 md:mt-0 md:col-span-3'>
                 <form onSubmit={formik.handleSubmit}>
-                  <div className="shadow overflow-hidden sm:rounded-md">
-                    <div className="px-4 py-5 bg-white sm:p-6">
-                      <div className="grid grid-cols-6 gap-6">
-                        <div className="col-span-6 sm:col-span-3">
+                  <div className='shadow overflow-hidden sm:rounded-md'>
+                    <div className='px-4 py-5 bg-white sm:p-6'>
+                      <div className='grid grid-cols-6 gap-6'>
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="first_name"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='first_name'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             First name
                           </label>
                           <input
-                            id="firstName"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            id='firstName'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.firstName}
-                            placeholder="Enter first name"
+                            placeholder='Enter first name'
                           />
                           {formik.touched.firstName &&
                             formik.errors.firstName && (
@@ -335,20 +333,20 @@ export default function UserEditModal(props) {
                             )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3">
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="middleName"
-                            className="py-1 block text-sm font-medium text-gray-700"
+                            htmlFor='middleName'
+                            className='py-1 block text-sm font-medium text-gray-700'
                           >
                             Middle name
                           </label>
                           <input
-                            id="middleName"
+                            id='middleName'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.middleName}
-                            placeholder="Enter last name"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Enter last name'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.middleName &&
                             formik.errors.middleName && (
@@ -357,21 +355,21 @@ export default function UserEditModal(props) {
                               ></Warning>
                             )}
                         </div>
-                        <div className="col-span-6 sm:col-span-3">
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="nickName"
-                            className="py-1 block text-sm font-medium text-gray-700"
+                            htmlFor='nickName'
+                            className='py-1 block text-sm font-medium text-gray-700'
                           >
                             Nick Name
                           </label>
 
                           <input
-                            id="nickName"
+                            id='nickName'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.nickName}
-                            placeholder="Enter nick name"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Enter nick name'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.nickName &&
                             formik.errors.nickName && (
@@ -381,21 +379,21 @@ export default function UserEditModal(props) {
                             )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3">
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="spouseName"
-                            className="py-1 block text-sm font-medium text-gray-700"
+                            htmlFor='spouseName'
+                            className='py-1 block text-sm font-medium text-gray-700'
                           >
                             Spouse Name
                           </label>
 
                           <input
-                            id="spouseName"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            id='spouseName'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.spouseName}
-                            placeholder="Enter spouse name"
+                            placeholder='Enter spouse name'
                           />
                           {/*{formik.touched.spouseName && formik.errors.spouseName && (*/}
                           {/*<Warning*/}
@@ -436,18 +434,18 @@ export default function UserEditModal(props) {
                         {/*<Warning message={formik.errors.passwordConfirm}></Warning>)}*/}
                         {/*</div>*/}
 
-                        <div className="col-span-6 sm:col-span-3">
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="dob"
-                            className="block text-sm  text-gray-700 py-1"
+                            htmlFor='dob'
+                            className='block text-sm  text-gray-700 py-1'
                           >
-                            <span className="text-red-600 pt-2 mr-1">*</span>
+                            <span className='text-red-600 pt-2 mr-1'>*</span>
                             Date of birth
                           </label>
 
                           <input
-                            id="dob"
-                            type="date"
+                            id='dob'
+                            type='date'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={
@@ -457,65 +455,65 @@ export default function UserEditModal(props) {
                                     .substr(0, 10)
                                 : ""
                             }
-                            placeholder="Date of birth"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Date of birth'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.dob && formik.errors.dob && (
                             <Warning message={formik.errors.dob}></Warning>
                           )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3">
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="phone"
-                            className="py-1 block text-sm font-medium text-gray-700"
+                            htmlFor='phone'
+                            className='py-1 block text-sm font-medium text-gray-700'
                           >
                             Phone
                           </label>
 
                           <input
-                            id="phone"
+                            id='phone'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.phone}
-                            placeholder="Enter phone number"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Enter phone number'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.phone && formik.errors.phone && (
                             <Warning message={formik.errors.phone}></Warning>
                           )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3">
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="gender"
-                            className="py-1 block text-sm font-medium text-gray-700"
+                            htmlFor='gender'
+                            className='py-1 block text-sm font-medium text-gray-700'
                           >
                             Gender
                           </label>
                           <select
-                            id="gender"
+                            id='gender'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.gender}
-                            placeholder="Select gender"
-                            className=" cursor-pointer border-2 px-4  py-2 w-full text-sm text-black bg-white rounded-md focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Select gender'
+                            className=' cursor-pointer border-2 px-4  py-2 w-full text-sm text-black bg-white rounded-md focus:outline-none focus:bg-white focus:text-gray-900'
                           >
                             <option disabled>Select gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Others</option>
+                            <option value='male'>Male</option>
+                            <option value='female'>Female</option>
+                            <option value='other'>Others</option>
                           </select>
                           {formik.touched.gender && formik.errors.gender && (
                             <Warning message={formik.errors.gender}></Warning>
                           )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3">
-                          <p className="text-sm font-normal text-left  ">
+                        <div className='col-span-6 sm:col-span-3'>
+                          <p className='text-sm font-normal text-left  '>
                             Country Name
                           </p>
-                          <div className=" py-1 w-full ">
+                          <div className=' py-1 w-full '>
                             <CountryDropdown
                               value={country}
                               onChange={handleCountryValue}
@@ -527,83 +525,83 @@ export default function UserEditModal(props) {
                               }}
                               tabIndex={1000}
                               disabled={false}
-                              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                              className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             />
                             {/*{formik.touched.nationality && formik.errors.nationality && (*/}
                             {/*<Warning message={formik.errors.nationality}></Warning>)}*/}
                           </div>
                         </div>
 
-                        <div className=" col-span-6 sm:col-span-3 ">
+                        <div className=' col-span-6 sm:col-span-3 '>
                           <label
-                            htmlFor="nationalId"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='nationalId'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             National Id
                           </label>
                           <input
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            type="number"
-                            name="nationalId"
-                            id="nationalId"
+                            type='number'
+                            name='nationalId'
+                            id='nationalId'
                             value={formik.values.nationalId}
-                            placeholder="National Id"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='National Id'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
 
                           {/*{formik.touched.nationalId && formik.errors.nationalId && (*/}
                           {/*<Warning message={formik.errors.nationalId}></Warning>)}*/}
                         </div>
 
-                        <div className=" col-span-6 sm:col-span-3 ">
+                        <div className=' col-span-6 sm:col-span-3 '>
                           <label
-                            htmlFor="zipcode"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='zipcode'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             ZIP / Postal
                           </label>
                           <input
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            type="string"
-                            name="zipcode"
-                            id="zipcode"
+                            type='string'
+                            name='zipcode'
+                            id='zipcode'
                             value={formik.values.zipcode}
-                            autoComplete="zipcode"
-                            placeholder="Zip/Postal code"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            autoComplete='zipcode'
+                            placeholder='Zip/Postal code'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.zipcode && formik.errors.zipcode && (
                             <Warning message={formik.errors.zipcode}></Warning>
                           )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3 ">
+                        <div className='col-span-6 sm:col-span-3 '>
                           <label
-                            htmlFor="street"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='street'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             Address
                           </label>
 
                           <input
-                            id="street"
+                            id='street'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.street}
-                            placeholder="Enter street"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Enter street'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.street && formik.errors.street && (
                             <Warning message={formik.errors.street}></Warning>
                           )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3 ">
+                        <div className='col-span-6 sm:col-span-3 '>
                           <label
-                            htmlFor="city"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='city'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             City
                           </label>
@@ -611,22 +609,22 @@ export default function UserEditModal(props) {
                           <input
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            type="text"
-                            name="city"
-                            id="city"
+                            type='text'
+                            name='city'
+                            id='city'
                             value={formik.values.city}
-                            placeholder="Enter city"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Enter city'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.city && formik.errors.city && (
                             <Warning message={formik.errors.city}></Warning>
                           )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3 ">
+                        <div className='col-span-6 sm:col-span-3 '>
                           <label
-                            htmlFor="state"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='state'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             State
                           </label>
@@ -634,22 +632,22 @@ export default function UserEditModal(props) {
                           <input
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            type="text"
-                            name="state"
-                            id="state"
+                            type='text'
+                            name='state'
+                            id='state'
                             value={formik.values.state}
-                            placeholder="Enter state"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Enter state'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                           {formik.touched.state && formik.errors.state && (
                             <Warning message={formik.errors.state} />
                           )}
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3">
+                        <div className='col-span-6 sm:col-span-3'>
                           <label
-                            htmlFor="status"
-                            className="py-1 block text-sm font-medium text-gray-700"
+                            htmlFor='status'
+                            className='py-1 block text-sm font-medium text-gray-700'
                           >
                             User Status
                           </label>
@@ -675,49 +673,49 @@ export default function UserEditModal(props) {
                           />
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3 ">
+                        <div className='col-span-6 sm:col-span-3 '>
                           <label
-                            htmlFor="state"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='state'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             Introducer Name
                           </label>
 
                           <input
-                            type="text"
-                            name="state"
-                            id="state"
+                            type='text'
+                            name='state'
+                            id='state'
                             value={introducerName}
                             disabled
-                            placeholder="Introducer Name"
-                            className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Introducer Name'
+                            className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-4 focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                         </div>
 
-                        <div className="col-span-6 sm:col-span-3 ">
+                        <div className='col-span-6 sm:col-span-3 '>
                           <label
-                            htmlFor="state"
-                            className="block text-sm font-medium text-gray-700 py-1"
+                            htmlFor='state'
+                            className='block text-sm font-medium text-gray-700 py-1'
                           >
                             Update Introducer
                           </label>
 
                           <input
                             onChange={(e) => setIntroducerEmail(e.target.value)}
-                            type="email"
-                            name="introducerEmail"
-                            id="introducerEmail"
+                            type='email'
+                            name='introducerEmail'
+                            id='introducerEmail'
                             value={introducerEmail}
-                            placeholder="Introducer email"
-                            className="border-2 py-2 px-2 w-full text-sm text-black bg-white rounded-md  focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder='Introducer email'
+                            className='border-2 py-2 px-2 w-full text-sm text-black bg-white rounded-md  focus:outline-none focus:bg-white focus:text-gray-900'
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="px-6 py-3 bg-gray-50 text-center sm:px-6">
+                    <div className='px-6 py-3 bg-gray-50 text-center sm:px-6'>
                       <button
-                        type="submit"
-                        className="inline-flex justify-center py-2 px-12 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-site-theme hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-site-theme"
+                        type='submit'
+                        className='inline-flex justify-center py-2 px-12 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-site-theme hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-site-theme'
                       >
                         Update
                       </button>
@@ -729,6 +727,6 @@ export default function UserEditModal(props) {
           </div>
         </Layout>
       </>
-    );
-  } else return <CustomLoader />;
+    )
+  } else return <CustomLoader />
 }

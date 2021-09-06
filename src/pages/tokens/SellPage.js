@@ -119,7 +119,7 @@ export default function SellPage() {
           errors.money = "Must be greater than 0.0"
         }
         let balance = await getEagleBalance(srcAddress)
-        console.log(balance)
+        // console.log(balance)
         if (balance < money) {
           errors.money =
             "Can not send more than your balance. Current balance " + balance
@@ -160,7 +160,7 @@ export default function SellPage() {
           errors.money = "Must be greater than or equals to 0.00000100"
         }
         let balance = await getBtcBalance(srcAddress)
-        console.log(balance, "b")
+        // console.log(balance, "b")
         if (balance < money) {
           errors.money =
             "Can not send more than your balance. Current balance " + balance
@@ -178,12 +178,12 @@ export default function SellPage() {
       //     errors.address = 'Invalid bch address';
       // }
 
-      console.log("error", errors)
+      // console.log("error", errors)
       setLoading(false)
       return errors
     },
     onSubmit: (values) => {
-      console.log("s", values)
+      // console.log("s", values)
       if (tokens) {
         let data = {}
         if (user.role === "user") {
@@ -333,7 +333,7 @@ export default function SellPage() {
               setLoading(true)
               setTransfer(data)
                 .then((res) => {
-                  console.log(res)
+                  // console.log(res)
                   // console.log(`Order Id is: ${res.data.result.order_id}`)
                   setLoading(false)
                   if (res.ok) {

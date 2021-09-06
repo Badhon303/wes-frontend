@@ -23,7 +23,7 @@ export default function CreateBtcModal({ createAccount, open, cbCreate }) {
           setLoading(false)
 
           if (response.ok) {
-            console.log(response, "btc create response")
+            // console.log(response, "btc create response")
             setAccountInfo(response.data)
           } else {
             Swal.fire({
@@ -44,7 +44,7 @@ export default function CreateBtcModal({ createAccount, open, cbCreate }) {
           setLoading(false)
 
           if (response.ok) {
-            console.log(response, "ether create response")
+            // console.log(response, "ether create response")
             setAccountInfo(response.data)
           } else {
             Swal.fire({

@@ -85,7 +85,7 @@ export default function AdminDashboard() {
             else if (response.code === 404 || response.code === 500)
                 console.log("Whoops..", response.message, "error");
             else
-                console.log(response, 'user')
+                // console.log(response, 'user')
             let a = response.totalUsers.approved;
             let r = response.totalUsers.rejected;
             let p = response.totalUsers.pending;

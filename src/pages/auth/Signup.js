@@ -102,7 +102,7 @@ function Signup() {
     validate,
     handleOnChange,
     onSubmit: (values) => {
-      console.log("signup values: ", values)
+      // console.log("signup values: ", values)
       setLoading(true)
       AuthAPI.signup(values, referrerId ? referrerId[1] : null)
         .then((response) => {

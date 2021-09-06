@@ -322,7 +322,7 @@ export default function BuyPage() {
                     // setOtp(otpValue)
                     data.otp = otpValue
 
-                    console.log(otpValue)
+                    // console.log(otpValue)
                   },
                   // allowOutsideClick: () => !Swal.isLoading(),
                 }).then(() => {
@@ -331,7 +331,7 @@ export default function BuyPage() {
                   setLoading(true)
                   PurchaseAPI.submitOrder(data)
                     .then((res) => {
-                      console.log("submit order: ", res)
+                      // console.log("submit order: ", res)
                       // console.log(`Order Id is: ${res.data.result.order_id}`)
                       if (res.ok && cartItems.result) {
                         PurchaseAPI.rewardReferralPoint(
@@ -528,7 +528,7 @@ export default function BuyPage() {
         }))
         setLoading(true)
         PurchaseAPI.postCartItems(data).then((res) => {
-          console.log("cart calculation api: ", res)
+          // console.log("cart calculation api: ", res)
           setLoading(false)
           if (res.ok) {
             setStep(STEP_CART_CHECKOUT)

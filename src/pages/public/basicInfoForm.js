@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import * as FetchApi from "../../libs/FetchApi";
-import { BASE_URL } from "../../constants";
-import Swal from "sweetalert2";
-import { useFormik } from "formik";
-import UserManager from "../../libs/UserManager";
-import Warning from "../../components/Message/warning";
-import { CountryDropdown } from "react-country-region-selector";
-import { useHistory } from "react-router-dom";
-import Loader from "react-loader-spinner";
+import React, { useState, useEffect } from "react"
+import * as FetchApi from "../../libs/FetchApi"
+import { BASE_URL } from "../../constants"
+import Swal from "sweetalert2"
+import { useFormik } from "formik"
+import UserManager from "../../libs/UserManager"
+import Warning from "../../components/Message/warning"
+import { CountryDropdown } from "react-country-region-selector"
+import { useHistory } from "react-router-dom"
+import Loader from "react-loader-spinner"
 
-const REDIRECT_AFTER_VERIFICATION = "/buy";
+const REDIRECT_AFTER_VERIFICATION = "/buy"
 
-const VERIFICATION_TYPE_NID = 1;
-const VERIFICATION_TYPE_PASSPORT = 2;
-const VERIFICATION_TYPE_DRIVING_LICENSE = 3;
+const VERIFICATION_TYPE_NID = 1
+const VERIFICATION_TYPE_PASSPORT = 2
+const VERIFICATION_TYPE_DRIVING_LICENSE = 3
 
 const validate = (values) => {
-  const errors = {};
+  const errors = {}
   const {
     firstName,
     nickName,
@@ -30,28 +30,28 @@ const validate = (values) => {
     address,
     city,
     country,
-  } = values;
+  } = values
 
   if (!nickName) {
-    errors.nickkNme = "Required";
+    errors.nickkNme = "Required"
   } else if (!(nickName.length >= 3 && nickName.length < 30)) {
-    errors.nickName = "Must be greater than 3 and less than 30 characters";
+    errors.nickName = "Must be greater than 3 and less than 30 characters"
   }
 
   if (!firstName) {
-    errors.firstName = "Required";
+    errors.firstName = "Required"
     // } else if (!(firstName.length >= 8 && firstName.length < 200)) {
     //     errors.firstName = 'Must be greater than 8 characters and less than 200 ';
   } else if (!/^[a-zA-Z]+[.]*$/i.test(values.firstName)) {
-    errors.firstName = "Firstname contains characters and dot only";
+    errors.firstName = "Firstname contains characters and dot only"
   }
 
   if (!lastName) {
-    errors.lastName = "Required";
+    errors.lastName = "Required"
     // } else if (!(firstName.length >= 8 && firstName.length < 200)) {
     //     errors.firstName = 'Must be greater than 8 characters and less than 200 ';
   } else if (!/^[a-zA-Z, ]*$/i.test(values.lastName)) {
-    errors.lastName = "Lastname contains characters only";
+    errors.lastName = "Lastname contains characters only"
   }
 
   // if (!middleName) {
@@ -61,27 +61,27 @@ const validate = (values) => {
   // }
 
   if (!dob) {
-    errors.dob = "Required";
+    errors.dob = "Required"
   } else {
-    const selectedDate = new Date(dob);
-    const todaysdate = new Date();
-    todaysdate.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(dob)
+    const todaysdate = new Date()
+    todaysdate.setHours(0, 0, 0, 0)
     if (!(selectedDate.getTime() < todaysdate.getTime())) {
-      errors.dob = "Date of birth must not be toady and forward";
+      errors.dob = "Date of birth must not be toady and forward"
     }
   }
 
   if (!gender) {
-    errors.gender = "Required";
+    errors.gender = "Required"
   }
   // if(!spouseName){
   //     errors.spouseName = 'Required';
   // }
 
   if (!zipcode) {
-    errors.zipcode = "Please type a correct Postal/Zip Code";
+    errors.zipcode = "Please type a correct Postal/Zip Code"
   } else if (!/^[0-9]+(-[0-9]+)?$/i.test(values.zipcode)) {
-    errors.zipcode = "Zipcode can only";
+    errors.zipcode = "Zipcode can only"
   }
 
   // if (!nationalId) {
@@ -89,29 +89,29 @@ const validate = (values) => {
   // }
   else if (!/^[0-9]{13}$|^([a-zA-Z]{2}-[0-9]+)?$/i.test(values.nationalId)) {
     errors.nationalId =
-      "National Id can only be 13 characters, numbers, and hyphen";
+      "National Id can only be 13 characters, numbers, and hyphen"
   }
 
   if (!state) {
-    errors.state = "Required";
+    errors.state = "Required"
   }
   if (!phone) {
-    errors.phone = "Required";
+    errors.phone = "Required"
   } else if (!/^[0][1-9]\d{9}$|^[1-9]\d{9}$/i.test(values.phone)) {
-    errors.phone = "Please enter 11 numbers";
+    errors.phone = "Please enter 11 numbers"
   }
 
   if (!city) {
-    errors.city = "Required";
+    errors.city = "Required"
   }
   if (!street) {
-    errors.street = "Required";
+    errors.street = "Required"
   }
 
-  console.log(errors, values, "errors");
+  // console.log(errors, values, "errors");
 
-  return errors;
-};
+  return errors
+}
 
 // {
 //     "firstName": "Naushad",
@@ -131,23 +131,23 @@ const validate = (values) => {
 // }
 
 export default function BasicInfoForm(props) {
-  const user = UserManager.getLoggedInUser();
-  const [step, setStep] = useState(props.basicFormStepperSet);
-  const [loading, setLoading] = useState(false);
+  const user = UserManager.getLoggedInUser()
+  const [step, setStep] = useState(props.basicFormStepperSet)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    setStep(props.basicFormStepperSet);
-  }, [props.basicFormStepperSet]);
+    setStep(props.basicFormStepperSet)
+  }, [props.basicFormStepperSet])
 
-  let history = useHistory();
+  let history = useHistory()
 
   const [country, setCountry] = useState(
     user && user.nationality ? user.nationality : "United States"
-  );
+  )
 
   function handleCountryValue(e) {
-    setCountry(e);
-    formik.handleChange(e);
+    setCountry(e)
+    formik.handleChange(e)
   }
 
   const formik = useFormik({
@@ -194,21 +194,21 @@ export default function BasicInfoForm(props) {
     validate,
     onSubmit: (values) => {
       if (country) {
-        values.nationality = country;
+        values.nationality = country
       }
       if (values.nationalId) {
-        values.nationalId = values.nationalId.toString();
+        values.nationalId = values.nationalId.toString()
       }
 
-      setLoading(true);
+      setLoading(true)
 
       FetchApi.sendPutRequest(`/users/${user.id}`, values, { credential: true })
         .then((response) => {
-          if (response.code === 401) history.push("/signin");
+          if (response.code === 401) history.push("/signin")
           else if (response.code !== 400 && response.ok) {
-            console.log(response.data.data);
-            setLoading(false);
-            UserManager.setLoggedInUser(response.data.data);
+            // console.log(response.data.data);
+            setLoading(false)
+            UserManager.setLoggedInUser(response.data.data)
             // history.push(REDIRECT_AFTER_SIGNIN);
             // Swal.fire({
             //     title: "Congratulations",
@@ -217,24 +217,24 @@ export default function BasicInfoForm(props) {
             //     confirmButtonText: 'Okay',
             // });
 
-            props.cb && props.cb(true);
+            props.cb && props.cb(true)
           } else {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
               title: response.err.statusText,
               text: response.data.message,
               confirmButtonColor: "#ff8c00",
               confirmButtonText: "Back",
-            });
+            })
             // props.cb && props.cb(false);
           }
         })
         .catch((err) => {
-          Swal.fire("Error", err.message, "error");
+          Swal.fire("Error", err.message, "error")
           // props.cb && props.cb(false);
-        });
+        })
     },
-  });
+  })
 
   // function directSubmit(e) {
   //     // props.cb && props.cb(true);
@@ -250,34 +250,34 @@ export default function BasicInfoForm(props) {
   // }
 
   function handleSubStepper() {
-    setStep(2);
-    props.subStepper(2);
+    setStep(2)
+    props.subStepper(2)
   }
 
   return (
-    <div className="flex items-center   ">
+    <div className='flex items-center   '>
       <div>
-        <p className="text-lg font-bold text-left text-gray-500 pb-4">
+        <p className='text-lg font-bold text-left text-gray-500 pb-4'>
           {props.title}{" "}
         </p>
 
         <form
           onSubmit={(e) => {
-            console.log("submitting form");
-            formik.handleSubmit(e);
+            // console.log("submitting form");
+            formik.handleSubmit(e)
           }}
         >
           {step == 1 && (
-            <div className="grid grid-cols-6 gap-x-2 gap-y-4">
-              <div className="col-span-6 sm:col-span-6">
-                <p className=" text-base font-medium text-left pt-t pb-4">
+            <div className='grid grid-cols-6 gap-x-2 gap-y-4'>
+              <div className='col-span-6 sm:col-span-6'>
+                <p className=' text-base font-medium text-left pt-t pb-4'>
                   Basic Info{" "}
                 </p>
 
-                <p className="text-sm font-normal text-left  ">
-                  <span className="text-red-600 pt-2 mr-1">*</span>Nationality{" "}
+                <p className='text-sm font-normal text-left  '>
+                  <span className='text-red-600 pt-2 mr-1'>*</span>Nationality{" "}
                 </p>
-                <div className=" py-1 w-full ">
+                <div className=' py-1 w-full '>
                   <CountryDropdown
                     value={country}
                     onChange={handleCountryValue}
@@ -289,7 +289,7 @@ export default function BasicInfoForm(props) {
                     }}
                     tabIndex={1000}
                     disabled={false}
-                    className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                   />
                   {formik.touched.country && formik.errors.country && (
                     <Warning message={formik.errors.country}></Warning>
@@ -297,111 +297,111 @@ export default function BasicInfoForm(props) {
                 </div>
               </div>
 
-              <div className="col-span-6 sm:col-span-2">
+              <div className='col-span-6 sm:col-span-2'>
                 <label
-                  htmlFor="first_name"
-                  className="block text-sm  text-gray-700 py-1"
+                  htmlFor='first_name'
+                  className='block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>First name
+                  <span className='text-red-600 pt-2 mr-1'>*</span>First name
                 </label>
                 <input
-                  id="firstName"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  id='firstName'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.firstName}
-                  placeholder="First name"
+                  placeholder='First name'
                 />
                 {formik.touched.firstName && formik.errors.firstName && (
                   <Warning message={formik.errors.firstName}></Warning>
                 )}
               </div>
 
-              <div className="col-span-6 sm:col-span-2">
+              <div className='col-span-6 sm:col-span-2'>
                 <label
-                  htmlFor="middleName"
-                  className="py-1 block text-sm  text-gray-700"
+                  htmlFor='middleName'
+                  className='py-1 block text-sm  text-gray-700'
                 >
                   Middle name
                 </label>
                 <input
-                  id="middleName"
+                  id='middleName'
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.middleName}
-                  placeholder="Middle name"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Middle name'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
               </div>
-              <div className="col-span-6 sm:col-span-2">
+              <div className='col-span-6 sm:col-span-2'>
                 <label
-                  htmlFor="lastName"
-                  className="py-1 block text-sm text-gray-700 py-1"
+                  htmlFor='lastName'
+                  className='py-1 block text-sm text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>Last Name
+                  <span className='text-red-600 pt-2 mr-1'>*</span>Last Name
                 </label>
 
                 <input
-                  id="lastName"
+                  id='lastName'
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.lastName}
-                  placeholder="Last name"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Last name'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {formik.touched.lastName && formik.errors.lastName && (
                   <Warning message={formik.errors.lastName}></Warning>
                 )}
               </div>
 
-              <div className="col-span-6 sm:col-span-3">
+              <div className='col-span-6 sm:col-span-3'>
                 <label
-                  htmlFor="nickName"
-                  className="py-1 block text-sm text-gray-700 py-1"
+                  htmlFor='nickName'
+                  className='py-1 block text-sm text-gray-700 py-1'
                 >
                   Nick Name
                 </label>
 
                 <input
-                  id="nickName"
+                  id='nickName'
                   disabled
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={user && user.nickName}
-                  placeholder="Nick name"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Nick name'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {/*{formik.touched.nickName && formik.errors.nickName && (<Warning message={formik.errors.nickName}></Warning>)}*/}
               </div>
 
-              <div className="col-span-6 sm:col-span-3">
+              <div className='col-span-6 sm:col-span-3'>
                 <label
-                  htmlFor="spouseName"
-                  className="py-1 block text-sm text-gray-700 py-1"
+                  htmlFor='spouseName'
+                  className='py-1 block text-sm text-gray-700 py-1'
                 >
                   Spouse Name
                 </label>
 
                 <input
-                  id="spouseName"
+                  id='spouseName'
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.spouseName}
-                  placeholder="Spouse Name"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Spouse Name'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
               </div>
-              <div className="col-span-6 sm:col-span-3">
+              <div className='col-span-6 sm:col-span-3'>
                 <label
-                  htmlFor="dob"
-                  className="py-1 block text-sm  text-gray-700 py-1"
+                  htmlFor='dob'
+                  className='py-1 block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>Date of birth
+                  <span className='text-red-600 pt-2 mr-1'>*</span>Date of birth
                 </label>
 
                 <input
-                  id="dob"
-                  type="date"
+                  id='dob'
+                  type='date'
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={
@@ -409,56 +409,56 @@ export default function BasicInfoForm(props) {
                       ? new Date(formik.values.dob).toISOString().substr(0, 10)
                       : ""
                   }
-                  placeholder="Date of birth"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Date of birth'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {formik.touched.dob && formik.errors.dob && (
                   <Warning message={formik.errors.dob}></Warning>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-3">
+              <div className='col-span-6 sm:col-span-3'>
                 <label
-                  htmlFor="gender"
-                  className="py-1 block text-sm  text-gray-700 py-1"
+                  htmlFor='gender'
+                  className='py-1 block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>
+                  <span className='text-red-600 pt-2 mr-1'>*</span>
                   Gender
                 </label>
                 <select
-                  id="gender"
-                  name="gender"
+                  id='gender'
+                  name='gender'
                   onChange={formik.handleChange}
                   // onBlur={formik.handleBlur}
                   value={formik.values.gender}
-                  placeholder="Gender"
-                  className=" cursor-pointer border-2 px-2  py-2 w-full text-sm text-black bg-white rounded-md focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Gender'
+                  className=' cursor-pointer border-2 px-2  py-2 w-full text-sm text-black bg-white rounded-md focus:outline-none focus:bg-white focus:text-gray-900'
                 >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value=''>Select gender</option>
+                  <option value='male'>Male</option>
+                  <option value='female'>Female</option>
+                  <option value='other'>Other</option>
                 </select>
                 {formik.touched.gender && formik.errors.gender && (
                   <Warning message={formik.errors.gender} />
                 )}
               </div>
 
-              <div className=" col-span-6 sm:col-span-6 ">
+              <div className=' col-span-6 sm:col-span-6 '>
                 <label
-                  htmlFor="phone"
-                  className="block text-sm  text-gray-700 py-1"
+                  htmlFor='phone'
+                  className='block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>Phone No
+                  <span className='text-red-600 pt-2 mr-1'>*</span>Phone No
                 </label>
                 <input
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  type="text"
-                  name="phone"
-                  id="phone"
+                  type='text'
+                  name='phone'
+                  id='phone'
                   value={formik.values.phone}
-                  placeholder="Phone NO"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Phone NO'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {formik.touched.phone && formik.errors.phone && (
                   <Warning message={formik.errors.phone} />
@@ -468,71 +468,71 @@ export default function BasicInfoForm(props) {
           )}
 
           {step === 2 && (
-            <div className="relative grid grid-cols-6 gap-4">
-              <p className="text-base font-medium text-left pt-6 pb-3">
+            <div className='relative grid grid-cols-6 gap-4'>
+              <p className='text-base font-medium text-left pt-6 pb-3'>
                 {" "}
                 Residential Address{" "}
               </p>
 
-              <div className=" col-span-6 sm:col-span-6 ">
+              <div className=' col-span-6 sm:col-span-6 '>
                 <label
-                  htmlFor="nationalId"
-                  className="block text-sm  text-gray-700 py-1"
+                  htmlFor='nationalId'
+                  className='block text-sm  text-gray-700 py-1'
                 >
                   National Id
                 </label>
                 <input
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  type="number"
-                  name="nationalId"
-                  id="nationalId"
+                  type='number'
+                  name='nationalId'
+                  id='nationalId'
                   value={formik.values.nationalId}
-                  placeholder="National Id"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='National Id'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {/*{formik.touched.nationalId && formik.errors.nationalId && (*/}
                 {/*<Warning message={formik.errors.nationalId}></Warning>)}*/}
               </div>
 
-              <div className=" col-span-6 sm:col-span-3 ">
+              <div className=' col-span-6 sm:col-span-3 '>
                 <label
-                  htmlFor="zipcode"
-                  className="block text-sm  text-gray-700 py-1"
+                  htmlFor='zipcode'
+                  className='block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>ZIP / Postal
+                  <span className='text-red-600 pt-2 mr-1'>*</span>ZIP / Postal
                 </label>
                 <input
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  type="string"
-                  name="zipcode"
-                  id="zipcode"
+                  type='string'
+                  name='zipcode'
+                  id='zipcode'
                   value={formik.values.zipcode}
-                  autoComplete="postal-code"
-                  placeholder="Zip/Postal code"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  autoComplete='postal-code'
+                  placeholder='Zip/Postal code'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {formik.touched.zipcode && formik.errors.zipcode && (
                   <Warning message={formik.errors.zipcode}></Warning>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-3 ">
+              <div className='col-span-6 sm:col-span-3 '>
                 <label
-                  htmlFor="city"
-                  className="block text-sm  text-gray-700 py-1"
+                  htmlFor='city'
+                  className='block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>City
+                  <span className='text-red-600 pt-2 mr-1'>*</span>City
                 </label>
                 <input
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  type="text"
-                  name="city"
-                  id="city"
+                  type='text'
+                  name='city'
+                  id='city'
                   value={formik.values.city}
-                  placeholder="Enter city"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Enter city'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {formik.touched.city && formik.errors.city && (
                   <Warning message={formik.errors.city}></Warning>
@@ -540,55 +540,55 @@ export default function BasicInfoForm(props) {
               </div>
               {loading && (
                 <Loader
-                  type="Circles"
-                  color="#ff8c00"
+                  type='Circles'
+                  color='#ff8c00'
                   height={100}
                   width={100}
                   timeout={7000} //7 secs
-                  className=" inline-block align-middle absolute mt-16 justify-center items-center z-50  "
+                  className=' inline-block align-middle absolute mt-16 justify-center items-center z-50  '
                 />
               )}
 
-              <div className="col-span-6 sm:col-span-3 ">
+              <div className='col-span-6 sm:col-span-3 '>
                 <label
-                  htmlFor="city"
-                  className="block text-sm  text-gray-700 py-1"
+                  htmlFor='city'
+                  className='block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>State
+                  <span className='text-red-600 pt-2 mr-1'>*</span>State
                 </label>
 
                 <input
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  type="text"
-                  name="state"
-                  id="state"
+                  type='text'
+                  name='state'
+                  id='state'
                   value={formik.values.state}
-                  placeholder="Enter state"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Enter state'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {formik.touched.state && formik.errors.state && (
                   <Warning message={formik.errors.state}></Warning>
                 )}
               </div>
 
-              <div className="col-span-6 sm:col-span-3 ">
+              <div className='col-span-6 sm:col-span-3 '>
                 <label
-                  htmlFor="city"
-                  className="block text-sm  text-gray-700 py-1"
+                  htmlFor='city'
+                  className='block text-sm  text-gray-700 py-1'
                 >
-                  <span className="text-red-600 pt-2 mr-1">*</span>Street
+                  <span className='text-red-600 pt-2 mr-1'>*</span>Street
                 </label>
 
                 <input
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  type="text"
-                  name="street"
-                  id="street"
+                  type='text'
+                  name='street'
+                  id='street'
                   value={formik.values.street}
-                  placeholder="Enter street"
-                  className="border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900"
+                  placeholder='Enter street'
+                  className='border-2 py-2 w-full text-sm text-black bg-white rounded-md px-2 focus:outline-none focus:bg-white focus:text-gray-900'
                 />
                 {formik.touched.street && formik.errors.street && (
                   <Warning message={formik.errors.street}></Warning>
@@ -600,8 +600,8 @@ export default function BasicInfoForm(props) {
           {step === 1 && (
             <button
               onClick={handleSubStepper}
-              className="bg-site-theme  mt-6 w-full text-white active:bg-green-600 font-bold uppercase text-base px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none "
-              type="button"
+              className='bg-site-theme  mt-6 w-full text-white active:bg-green-600 font-bold uppercase text-base px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none '
+              type='button'
               style={{ transition: "all .15s ease" }}
             >
               Continue
@@ -609,8 +609,8 @@ export default function BasicInfoForm(props) {
           )}
           {step === 2 && (
             <button
-              type="submit"
-              className="bg-site-theme  mt-6 w-full text-white active:bg-green-600 font-bold uppercase text-base px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none "
+              type='submit'
+              className='bg-site-theme  mt-6 w-full text-white active:bg-green-600 font-bold uppercase text-base px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none '
               style={{ transition: "all .15s ease" }}
             >
               Continue
@@ -619,5 +619,5 @@ export default function BasicInfoForm(props) {
         </form>
       </div>
     </div>
-  );
+  )
 }

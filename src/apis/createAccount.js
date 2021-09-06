@@ -13,7 +13,7 @@ function postCreateBTCAccount(url) {
   }
 
   return fetch(`${BASE_URL}${url}`, requestOptions).then((res) => {
-    console.log(res, "response")
+    // console.log(res, "response")
     return res.json().then((data) => {
       if (res.ok) {
         return { ok: true, data }

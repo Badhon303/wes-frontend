@@ -66,7 +66,7 @@ export default function UserDashboard(props) {
   const [goldPoint, setGoldPoint] = useState(null) //hot wallet
   const [ownedGoldPointPrice, setOwnedGoldPointPrice] = useState(null) //hot wallet
 
-  console.log(introducer, "in")
+  // console.log(introducer, "in")
 
   const getUserApi = async () => {
     const myHeaders = new Headers()
@@ -146,14 +146,13 @@ export default function UserDashboard(props) {
             ? response.result.balance
             : "0"
         )
-      console.log(
-        "bappy: ",
-        setWolfBalance(
-          response && response.result && response.result.balance
-            ? response.result.balance
-            : "0"
-        )
-      )
+      // console.log(
+      //   setWolfBalance(
+      //     response && response.result && response.result.balance
+      //       ? response.result.balance
+      //       : "0"
+      //   )
+      // )
     } else console.log("Whoops..", "No user data found", "error")
   }
   const getSnowBalance = async () => {
@@ -576,7 +575,7 @@ export default function UserDashboard(props) {
       </div>
     )
 
-  console.log(user, userInfo, "u")
+  // console.log(user, userInfo, "u")
 
   return (
     <>

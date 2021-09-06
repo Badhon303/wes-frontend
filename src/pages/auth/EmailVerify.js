@@ -13,7 +13,7 @@ const EmailVerify = (props) => {
   useEffect(() => {
     // alert(props.match.params.id)
     AuthAPI.emailVerify(data).then((res) => {
-      console.log("emailverify: ", res)
+      // console.log("emailverify: ", res)
       if (res.data && res.data.registrationData) {
         setMessage(res.data.registrationData.message)
         setEmail(res.data.registrationData.user.email)
