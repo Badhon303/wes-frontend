@@ -14,6 +14,13 @@ export default function GpHistoryDetailsModal(props) {
   const userInfo = UserManager.getLoggedInUser()
   const [step, setStep] = useState(1)
 
+  let btc_tx_id = ""
+  if (process.env.REACT_APP_ENV === "dev") {
+    btc_tx_id = "https://www.blockchain.com/btc-testnet/tx/"
+  } else if (process.env.REACT_APP_ENV === "dev") {
+    btc_tx_id = "https://www.blockchain.com/btc/tx/"
+  }
+
   useEffect(() => {
     setStep(props.step)
 
@@ -117,10 +124,14 @@ export default function GpHistoryDetailsModal(props) {
                   <a
                     target='_blank'
                     href={
-                      process.env.REACT_APP_ENV === "dev"
-                        ? "https://kovan.etherscan.io/tx/" + details.txId
-                        : details.coin === "BTC"
-                        ? "https://www.blockchain.com/btc/tx/" + details.txId
+                      // process.env.REACT_APP_ENV === "dev"
+                      //   ? "https://kovan.etherscan.io/tx/" + details.txId
+                      //   : details.coin === "BTC"
+                      //   ? "https://www.blockchain.com/btc/tx/" + details.txId
+                      //   : "https://etherscan.io/tx/" + details.txId
+
+                      details.coin === "BTC"
+                        ? btc_tx_id + details.txId
                         : "https://etherscan.io/tx/" + details.txId
                     }
                   >

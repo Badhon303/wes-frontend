@@ -24,6 +24,13 @@ const responsive = {
   },
 }
 
+let btc_tx_id = ""
+if (process.env.REACT_APP_ENV === "dev") {
+  btc_tx_id = "https://www.blockchain.com/btc-testnet/tx/"
+} else if (process.env.REACT_APP_ENV === "dev") {
+  btc_tx_id = "https://www.blockchain.com/btc/tx/"
+}
+
 export default function OrderDetailsModal(props) {
   const orders = props.orderDetails
 
@@ -126,8 +133,7 @@ export default function OrderDetailsModal(props) {
                     //            "https://etherscan.io/tx/" +orders.payment_tx_id)}>{orders.payment_tx_id} </a>
                     href={
                       orders.payment_currency === "BTC"
-                        ? "https://www.blockchain.com/btc/tx/" +
-                          orders.payment_tx_id
+                        ? btc_tx_id + orders.payment_tx_id
                         : "https://etherscan.io/tx/" + orders.payment_tx_id
                     }
                   >
@@ -211,10 +217,14 @@ export default function OrderDetailsModal(props) {
                     <a
                       target='_blank'
                       href={
-                        process.env.REACT_APP_ENV === "dev"
-                          ? "https://kovan.etherscan.io/tx/" + result.tx_id
-                          : orders.payment_currency === "BTC"
-                          ? "https://www.blockchain.com/btc/tx/" + result.tx_id
+                        // process.env.REACT_APP_ENV === "dev"
+                        //   ? "https://kovan.etherscan.io/tx/" + result.tx_id
+                        //   : orders.payment_currency === "BTC"
+                        //   ? "https://www.blockchain.com/btc/tx/" + result.tx_id
+                        //   : "https://etherscan.io/tx/" + result.tx_id
+
+                        orders.payment_currency === "BTC"
+                          ? btc_tx_id + result.tx_id
                           : "https://etherscan.io/tx/" + result.tx_id
                       }
                     >

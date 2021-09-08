@@ -99,7 +99,7 @@ export default function UserOrderPage() {
       else if (
         response.code === 404 ||
         response.code === 403 ||
-        response.code === 500
+        response.coethde === 500
       )
         Swal.fire("Whoops..", "No orders found", "error")
       else {
