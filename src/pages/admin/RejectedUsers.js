@@ -224,6 +224,7 @@ export default function PendingUsers() {
           : "",
       introducerId: obj.introducer ? obj.introducer.id : null,
       email: obj.user.email,
+      role: obj.user.role,
       avatar:
         obj.user.photo && obj.user.photo !== "no-photo.jpg"
           ? PHOTO_URL + obj.user.photo
@@ -320,6 +321,13 @@ export default function PendingUsers() {
                     {
                       key: "email",
                       text: "Email",
+                      align: "center",
+                      sortable: true,
+                      className: " text-left px-2 break-words",
+                    },
+                    {
+                      key: "role",
+                      text: "Role",
                       align: "center",
                       sortable: true,
                       className: " text-left px-2 break-words",
