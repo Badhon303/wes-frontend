@@ -78,7 +78,7 @@ export default function PendingUsers() {
     myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"))
 
     const data = await fetch(
-      `${BASE_URL}/users?approvalStatus=rejected&role=user&page=${activePage}&sortBy=createdAt:desc`,
+      `${BASE_URL}/users?approvalStatus=rejected&role=user&page=${activePage}&sortBy=createdAt:desc&limit=50`,
       {
         method: "GET",
         headers: myHeaders,
@@ -196,12 +196,20 @@ export default function PendingUsers() {
           getUsersApi(1)
         } else {
           // handle err
-          Swal.fire("Error", res.data.message, "error")
+          Swal.fire(
+            "Error",
+            "This account cannot be deleted as it contains token",
+            "error"
+          )
         }
       })
       .catch((err) => {
         // something unwanted happened
-        Swal.fire("Error", err.message, "error")
+        Swal.fire(
+          "Error",
+          "This account cannot be deleted as it contains token",
+          "error"
+        )
       })
       .finally(() => {
         setLoading(false)
@@ -271,7 +279,7 @@ export default function PendingUsers() {
               <div className='bg-white shadow-md rounded my-6'>
                 <ReactDataTable
                   config={{
-                    page_size: 10,
+                    page_size: 50,
                     show_length_menu: false,
                     show_filter: true,
 
@@ -484,7 +492,7 @@ export default function PendingUsers() {
                     linkClass='page-link'
                     itemClass='p-2 text-site-theme'
                     activePage={activePage}
-                    itemsCountPerPage={10}
+                    itemsCountPerPage={50}
                     totalItemsCount={totalUser}
                     pageRangeDisplayed={5}
                     onChange={handlePageChange}

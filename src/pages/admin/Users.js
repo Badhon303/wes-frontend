@@ -83,7 +83,7 @@ export default function PendingUsers() {
     myHeaders.append("Authorization", "Bearer " + Cookies.get("access-token"))
 
     const data = await fetch(
-      `${BASE_URL}/users?approvalStatus=approved&role=user&page=${activePage}&sortBy=createdAt:desc`,
+      `${BASE_URL}/users?approvalStatus=approved&role=user&page=${activePage}&sortBy=createdAt:desc&limit=50`,
       {
         method: "GET",
         headers: myHeaders,
@@ -197,18 +197,31 @@ export default function PendingUsers() {
     setLoading(true)
     FetchApi.sendDeleteRequest(`/users/${userId}`, {}, { credential: true })
       .then((res) => {
+        console.log("delete res1 ", res.message)
         if (res.ok) {
           // success
           Swal.fire("User delete", "", "success")
           getUsersApi(1)
-        } else {
-          // handle err
-          Swal.fire("Error", res.data.message, "error")
+        }
+        // else if (res.code === 405) {
+        //   Swal.fire("Error", "User has balance you can not delete", "error")
+        // }
+        else {
+          console.log("delete res: ", err.message)
+          Swal.fire(
+            "Error",
+            "This account cannot be deleted as it contains token",
+            "error"
+          )
         }
       })
       .catch((err) => {
-        // something unwanted happened
-        Swal.fire("Error", err.message, "error")
+        // console.log("error delete: ", err)
+        Swal.fire(
+          "Error",
+          "This account cannot be deleted as it contains token",
+          "error"
+        )
       })
       .finally(() => {
         setLoading(false)
@@ -300,11 +313,13 @@ export default function PendingUsers() {
                 </button>
                 <div className='bg-white shadow-md rounded my-6'>
                   <ReactDataTable
+                    // style={{
+                    //   height: "400px", // This will force the table body to overflow and scroll, since there is not enough room
+                    // }}
                     config={{
-                      page_size: 10,
+                      page_size: 50,
                       show_length_menu: false,
                       show_filter: true,
-
                       className: " px-4 py-6",
                       show_pagination: false,
                     }}
@@ -516,7 +531,7 @@ export default function PendingUsers() {
                       linkClass='page-link'
                       itemClass='p-2 text-site-theme'
                       activePage={activePage}
-                      itemsCountPerPage={10}
+                      itemsCountPerPage={50}
                       totalItemsCount={totalUser}
                       pageRangeDisplayed={5}
                       onChange={handlePageChange}
